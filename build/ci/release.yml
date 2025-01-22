@@ -12,16 +12,16 @@ variables:
       GO111MODULE: "on"
       GOROOT: ${go_root}
       GOPATH: ${go_base_path}${workdir}
-      ADD_PATH: "${go_bin}:${go_base_path}${workdir}/bin:${go_base_path}${workdir}/src/github.com/mongodb/mongodb-atlas-cli/bin"
+      ADD_PATH: "${go_bin}:${go_base_path}${workdir}/bin:${go_base_path}${workdir}/src/github.com/mongodb/mongodb-cli/bin"
   - &go_options
     add_to_path:
       - ${go_bin}
       - ${go_base_path}${workdir}/bin
-      - ${go_base_path}${workdir}/src/github.com/mongodb/mongodb-atlas-cli/bin
+      - ${go_base_path}${workdir}/src/github.com/mongodb/mongodb-cli/bin
     include_expansions_in_env:
       - go_base_path
       - workdir
-    working_dir: src/github.com/mongodb/mongodb-atlas-cli
+    working_dir: src/github.com/mongodb/mongodb-cli
     env:
       <<: *go_env
 functions:
@@ -29,7 +29,7 @@ functions:
     - command: shell.exec
       type: setup
       params:
-        working_dir: src/github.com/mongodb/mongodb-atlas-cli/bin
+        working_dir: src/github.com/mongodb/mongodb-cli/bin
         script: |
           set -Eeou pipefail
           curl --output gh-token -sfL https://github.com/Link-/gh-token/releases/download/v2.0.1/linux-amd64
@@ -38,7 +38,7 @@ functions:
     - command: shell.exec
       type: setup
       params:
-        working_dir: src/github.com/mongodb/mongodb-atlas-cli/bin
+        working_dir: src/github.com/mongodb/mongodb-cli/bin
         script: |
           set -Eeou pipefail
 
@@ -47,7 +47,7 @@ functions:
     - command: shell.exec
       type: setup
       params:
-        working_dir: src/github.com/mongodb/mongodb-atlas-cli
+        working_dir: src/github.com/mongodb/mongodb-cli
         include_expansions_in_env:
           - notary_service_url
         script: |
@@ -59,7 +59,7 @@ functions:
     - command: shell.exec
       type: setup
       params:
-        working_dir: src/github.com/mongodb/mongodb-atlas-cli/bin
+        working_dir: src/github.com/mongodb/mongodb-cli/bin
         script: |
           set -Eeou pipefail
 
@@ -100,13 +100,13 @@ functions:
     - command: subprocess.exec
       type: setup
       params:
-        working_dir: src/github.com/mongodb/mongodb-atlas-cli
+        working_dir: src/github.com/mongodb/mongodb-cli
         command: choco install -y "go-msi" --force
   "uninstall go-msi":
     - command: subprocess.exec
       type: setup
       params:
-        working_dir: src/github.com/mongodb/mongodb-atlas-cli
+        working_dir: src/github.com/mongodb/mongodb-cli
         command: choco uninstall -y "go-msi"
   "generate msi":
     - command: subprocess.exec
@@ -116,7 +116,7 @@ functions:
         add_to_path:
           - ${go_bin}
           - ${go_base_path}${workdir}/bin
-          - ${go_base_path}${workdir}/src/github.com/mongodb/mongodb-atlas-cli/bin
+          - ${go_base_path}${workdir}/src/github.com/mongodb/mongodb-cli/bin
           - "/cygdrive/c/Program Files/go-msi"
           - "/cygdrive/c/wixtools/bin"
         env:
@@ -146,7 +146,7 @@ functions:
     - command: subprocess.exec
       type: test
       params:
-        working_dir: src/github.com/mongodb/mongodb-atlas-cli
+        working_dir: src/github.com/mongodb/mongodb-cli
         silent: true
         include_expansions_in_env:
           - evergreen_user
@@ -161,7 +161,7 @@ functions:
       type: test
       params:
         <<: *go_options
-        working_dir: src/github.com/mongodb/mongodb-atlas-cli/dist
+        working_dir: src/github.com/mongodb/mongodb-cli/dist
         include_expansions_in_env:
           - go_base_path
           - workdir
@@ -173,14 +173,14 @@ functions:
         aws_key: ${aws_key}
         aws_secret: ${aws_secret}
         local_files_include_filter:
-          - src/github.com/mongodb/mongodb-atlas-cli/dist/*.tar.gz
-          - src/github.com/mongodb/mongodb-atlas-cli/dist/*.zip
-          - src/github.com/mongodb/mongodb-atlas-cli/dist/*.deb
-          - src/github.com/mongodb/mongodb-atlas-cli/dist/*.rpm
-          - src/github.com/mongodb/mongodb-atlas-cli/dist/*.tgz
-          - src/github.com/mongodb/mongodb-atlas-cli/dist/*.json
-          - src/github.com/mongodb/mongodb-atlas-cli/dist/*.msi
-          - src/github.com/mongodb/mongodb-atlas-cli/dist/*.sig
+          - src/github.com/mongodb/mongodb-cli/dist/*.tar.gz
+          - src/github.com/mongodb/mongodb-cli/dist/*.zip
+          - src/github.com/mongodb/mongodb-cli/dist/*.deb
+          - src/github.com/mongodb/mongodb-cli/dist/*.rpm
+          - src/github.com/mongodb/mongodb-cli/dist/*.tgz
+          - src/github.com/mongodb/mongodb-cli/dist/*.json
+          - src/github.com/mongodb/mongodb-cli/dist/*.msi
+          - src/github.com/mongodb/mongodb-cli/dist/*.sig
         remote_file: ${project}/dist/${revision}_${created_at}/
         bucket: mongodb-mongocli-build
         permissions: public-read
@@ -222,7 +222,7 @@ functions:
           - revision
           - created_at
           - image
-        working_dir: src/github.com/mongodb/mongodb-atlas-cli/build/package/docker
+        working_dir: src/github.com/mongodb/mongodb-cli/build/package/docker
         binary: ./docker-build.sh
   "docker build repo":
     - command: subprocess.exec
@@ -235,7 +235,7 @@ functions:
           - entrypoint
           - mongo_package
           - mongo_repo
-        working_dir: src/github.com/mongodb/mongodb-atlas-cli/build/package/docker/repo
+        working_dir: src/github.com/mongodb/mongodb-cli/build/package/docker/repo
         binary: ./docker-build.sh
 tasks:
   - name: package_msi
@@ -254,8 +254,8 @@ tasks:
           aws_key: ${aws_key}
           aws_secret: ${aws_secret}
           local_files_include_filter:
-            - src/github.com/mongodb/mongodb-atlas-cli/bin/*.exe
-            - src/github.com/mongodb/mongodb-atlas-cli/dist/*.msi
+            - src/github.com/mongodb/mongodb-cli/bin/*.exe
+            - src/github.com/mongodb/mongodb-cli/dist/*.msi
           remote_file: ${project}/dist/${revision}_${created_at}/unsigned_
           bucket: mongodb-mongocli-build
           permissions: public-read
@@ -274,7 +274,7 @@ tasks:
       - command: subprocess.exec
         type: test
         params:
-          working_dir: src/github.com/mongodb/mongodb-atlas-cli
+          working_dir: src/github.com/mongodb/mongodb-cli
           include_expansions_in_env:
             - project
             - revision
@@ -293,7 +293,7 @@ tasks:
             ARTIFACTORY_PASSWORD: ${artifactory_password}
             GRS_USERNAME: ${garasign_username}
             GRS_PASSWORD: ${garasign_password}
-          working_dir: src/github.com/mongodb/mongodb-atlas-cli
+          working_dir: src/github.com/mongodb/mongodb-cli
           binary: build/package/windows_notarize.sh
       - func: "package"
         vars:
@@ -315,26 +315,26 @@ tasks:
           meta_package_name: ${meta_package_name}
       - command: archive.targz_pack
         params:
-          target: src/github.com/mongodb/mongodb-atlas-cli/dist/mongocli-deb-x86_64.tgz
-          source_dir: src/github.com/mongodb/mongodb-atlas-cli/dist/apt/x86_64
+          target: src/github.com/mongodb/mongodb-cli/dist/mongocli-deb-x86_64.tgz
+          source_dir: src/github.com/mongodb/mongodb-cli/dist/apt/x86_64
           include:
             - "*.deb"
       - command: archive.targz_pack
         params:
-          target: src/github.com/mongodb/mongodb-atlas-cli/dist/mongocli-deb-arm64.tgz
-          source_dir: src/github.com/mongodb/mongodb-atlas-cli/dist/apt/arm64
+          target: src/github.com/mongodb/mongodb-cli/dist/mongocli-deb-arm64.tgz
+          source_dir: src/github.com/mongodb/mongodb-cli/dist/apt/arm64
           include:
             - "*.deb"
       - command: archive.targz_pack
         params:
-          target: src/github.com/mongodb/mongodb-atlas-cli/dist/mongocli-rpm-x86_64.tgz
-          source_dir: src/github.com/mongodb/mongodb-atlas-cli/dist/yum/x86_64
+          target: src/github.com/mongodb/mongodb-cli/dist/mongocli-rpm-x86_64.tgz
+          source_dir: src/github.com/mongodb/mongodb-cli/dist/yum/x86_64
           include:
             - "*.rpm"
       - command: archive.targz_pack
         params:
-          target: src/github.com/mongodb/mongodb-atlas-cli/dist/mongocli-rpm-aarch64.tgz
-          source_dir: src/github.com/mongodb/mongodb-atlas-cli/dist/yum/arm64
+          target: src/github.com/mongodb/mongodb-cli/dist/mongocli-rpm-aarch64.tgz
+          source_dir: src/github.com/mongodb/mongodb-cli/dist/yum/arm64
           include:
             - "*.rpm"
       - func: "generate download archive json"
@@ -347,14 +347,14 @@ tasks:
           aws_key: ${download_center_aws_key}
           aws_secret: ${download_center_aws_secret}
           local_files_include_filter:
-            - src/github.com/mongodb/mongodb-atlas-cli/dist/*.tar.gz
-            - src/github.com/mongodb/mongodb-atlas-cli/dist/*.zip
-            - src/github.com/mongodb/mongodb-atlas-cli/dist/*.deb
-            - src/github.com/mongodb/mongodb-atlas-cli/dist/*.rpm
-            - src/github.com/mongodb/mongodb-atlas-cli/dist/*.tgz
-            - src/github.com/mongodb/mongodb-atlas-cli/dist/*.json
-            - src/github.com/mongodb/mongodb-atlas-cli/dist/*.msi
-            - src/github.com/mongodb/mongodb-atlas-cli/dist/*.sig
+            - src/github.com/mongodb/mongodb-cli/dist/*.tar.gz
+            - src/github.com/mongodb/mongodb-cli/dist/*.zip
+            - src/github.com/mongodb/mongodb-cli/dist/*.deb
+            - src/github.com/mongodb/mongodb-cli/dist/*.rpm
+            - src/github.com/mongodb/mongodb-cli/dist/*.tgz
+            - src/github.com/mongodb/mongodb-cli/dist/*.json
+            - src/github.com/mongodb/mongodb-cli/dist/*.msi
+            - src/github.com/mongodb/mongodb-cli/dist/*.sig
           remote_file: mongocli/
           build_variants:
             - release_mongocli_github

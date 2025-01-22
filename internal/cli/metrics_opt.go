@@ -19,7 +19,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/mongodb/mongodb-atlas-cli/mongocli/v2/internal/flag"
+	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/flag"
 	"go.mongodb.org/ops-manager/opsmngr"
 )
 

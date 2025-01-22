@@ -19,8 +19,8 @@ import (
 	"strings"
 
 	"github.com/AlecAivazis/survey/v2"
-	"github.com/mongodb/mongodb-atlas-cli/mongocli/v2/internal/config"
-	"github.com/mongodb/mongodb-atlas-cli/mongocli/v2/internal/validate"
+	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/config"
+	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/validate"
 	"go.mongodb.org/ops-manager/opsmngr"
 )
 

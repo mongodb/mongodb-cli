@@ -18,12 +18,12 @@ import (
 	"context"
 	"io"
 
-	"github.com/mongodb/mongodb-atlas-cli/mongocli/v2/internal/cli"
-	"github.com/mongodb/mongodb-atlas-cli/mongocli/v2/internal/cli/require"
-	"github.com/mongodb/mongodb-atlas-cli/mongocli/v2/internal/config"
-	"github.com/mongodb/mongodb-atlas-cli/mongocli/v2/internal/flag"
-	"github.com/mongodb/mongodb-atlas-cli/mongocli/v2/internal/oauth"
-	"github.com/mongodb/mongodb-atlas-cli/mongocli/v2/internal/usage"
+	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/cli"
+	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/cli/require"
+	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/config"
+	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/flag"
+	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/oauth"
+	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/usage"
 	"github.com/spf13/cobra"
 	"go.mongodb.org/ops-manager/opsmngr"
 )
@@ -36,7 +36,7 @@ type logoutOpts struct {
 	keepConfig bool
 }
 
-//go:generate mockgen -destination=../../mocks/mock_logout.go -package=mocks github.com/mongodb/mongodb-atlas-cli/mongocli/v2/internal/cli/auth Revoker,ConfigDeleter
+//go:generate mockgen -destination=../../mocks/mock_logout.go -package=mocks github.com/mongodb/mongodb-cli/mongocli/v2/internal/cli/auth Revoker,ConfigDeleter
 
 type ConfigDeleter interface {
 	Delete() error

@@ -11,8 +11,8 @@ MCLI_DESTINATION=./bin/$(MCLI_BINARY_NAME)
 MCLI_INSTALL_PATH="${GOPATH}/bin/$(MCLI_BINARY_NAME)"
 MCLI_E2E_BINARY?=../../../bin/${MCLI_BINARY_NAME}
 
-LINKER_FLAGS=-s -w -X github.com/mongodb/mongodb-atlas-cli/mongocli/v2/internal/version.GitCommit=${MCLI_GIT_SHA}
-MCLI_LINKER_FLAGS=${LINKER_FLAGS} -X github.com/mongodb/mongodb-atlas-cli/mongocli/v2/internal/version.Version=${MCLI_VERSION}
+LINKER_FLAGS=-s -w -X github.com/mongodb/mongodb-cli/mongocli/v2/internal/version.GitCommit=${MCLI_GIT_SHA}
+MCLI_LINKER_FLAGS=${LINKER_FLAGS} -X github.com/mongodb/mongodb-cli/mongocli/v2/internal/version.Version=${MCLI_VERSION}
 
 DEBUG_FLAGS=all=-N -l
 
@@ -94,12 +94,7 @@ addcopy:
 	@scripts/add-copy.sh
 
 .PHONY: generate
-generate: gen-docs gen-mocks gen-code ## Generate docs, mocks, code, all auto generated assets
-
-.PHONY: gen-code
-gen-code: ## Generate code
-	@echo "==> Generating code"
-	go run ./tools/cli-generator
+generate: gen-docs gen-mocks ## Generate docs, mocks, code, all auto generated assets
 
 .PHONY: gen-mocks
 gen-mocks: ## Generate mocks

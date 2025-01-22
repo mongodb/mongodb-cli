@@ -22,14 +22,14 @@ import (
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/briandowns/spinner"
-	"github.com/mongodb/mongodb-atlas-cli/mongocli/v2/internal/config"
-	"github.com/mongodb/mongodb-atlas-cli/mongocli/v2/internal/prompt"
-	"github.com/mongodb/mongodb-atlas-cli/mongocli/v2/internal/store"
-	"github.com/mongodb/mongodb-atlas-cli/mongocli/v2/internal/validate"
+	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/config"
+	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/prompt"
+	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/store"
+	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/validate"
 	"go.mongodb.org/ops-manager/opsmngr"
 )
 
-//go:generate mockgen -destination=../mocks/mock_default_opts.go -package=mocks github.com/mongodb/mongodb-atlas-cli/mongocli/v2/internal/cli ProjectOrgsLister
+//go:generate mockgen -destination=../mocks/mock_default_opts.go -package=mocks github.com/mongodb/mongodb-cli/mongocli/v2/internal/cli ProjectOrgsLister
 
 type ProjectOrgsLister interface {
 	Project(id string) (*opsmngr.Project, error)

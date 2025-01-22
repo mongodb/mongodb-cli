@@ -19,7 +19,7 @@ package search
 import (
 	"testing"
 
-	"github.com/mongodb/mongodb-atlas-cli/mongocli/v2/internal/test/fixture"
+	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/test/fixture"
 )
 
 func TestStringInSlice(t *testing.T) {

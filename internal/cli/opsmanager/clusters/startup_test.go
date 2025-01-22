@@ -20,10 +20,10 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/mongodb/mongodb-atlas-cli/mongocli/v2/internal/flag"
-	"github.com/mongodb/mongodb-atlas-cli/mongocli/v2/internal/mocks"
-	"github.com/mongodb/mongodb-atlas-cli/mongocli/v2/internal/test"
-	"github.com/mongodb/mongodb-atlas-cli/mongocli/v2/internal/test/fixture"
+	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/flag"
+	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/mocks"
+	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/test"
+	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/test/fixture"
 )
 
 func TestStartup_Run(t *testing.T) {

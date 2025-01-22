@@ -1,7 +1,7 @@
 # MongoDB CLI
 
-![GO tests](https://github.com/mongodb/mongodb-atlas-cli/workflows/GO%20tests/badge.svg)
-![golangci-lint](https://github.com/mongodb/mongodb-atlas-cli/workflows/golangci-lint/badge.svg)
+![GO tests](https://github.com/mongodb/mongodb-cli/workflows/GO%20tests/badge.svg)
+![golangci-lint](https://github.com/mongodb/mongodb-cli/workflows/golangci-lint/badge.svg)
 
 The MongoDB CLI is a modern command line interface that enables you to manage your MongoDB services from the terminal.
 
@@ -24,7 +24,7 @@ brew install mongocli
 
 ### Pre-built Binaries
 
-Download the appropriate version for your platform from [mongocli releases](https://github.com/mongodb/mongodb-atlas-cli/releases).
+Download the appropriate version for your platform from [mongocli releases](https://github.com/mongodb/mongodb-cli/releases).
 After you download the library, you can run it from anywhere and don't need to install it into a global location.
 This works well for shared hosts and other systems where you don't have a privileged account.
 
@@ -36,8 +36,8 @@ You can place this binary somewhere in your `PATH` for ease of use.
 #### Fetch Source
 
 ```bash
-git clone https://github.com/mongodb/mongodb-atlas-cli.git
-cd mongodb-atlas-cli
+git clone https://github.com/mongodb/mongodb-cli.git
+cd mongodb-cli
 ```
 
 #### Build

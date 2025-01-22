@@ -22,7 +22,7 @@ import (
 
 	"github.com/go-test/deep"
 	"github.com/golang/mock/gomock"
-	"github.com/mongodb/mongodb-atlas-cli/mongocli/v2/internal/mocks"
+	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/mocks"
 	"github.com/stretchr/testify/require"
 	"go.mongodb.org/ops-manager/opsmngr"
 )
