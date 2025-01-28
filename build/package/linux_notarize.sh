@@ -21,8 +21,8 @@ set -Eeou pipefail
 # goreleaser should already take care of calling this script as a part of a custom publisher.
 
 
-echo "GRS_CONFIG_USER1_USERNAME=${GRS_USERNAME_MONGOCLI}" >> "signing-envfile"
-echo "GRS_CONFIG_USER1_PASSWORD=${GRS_PASSWORD_MONGOCLI}" >> "signing-envfile"
+echo "GRS_CONFIG_USER1_USERNAME=${GRS_USERNAME}" >> "signing-envfile"
+echo "GRS_CONFIG_USER1_PASSWORD=${GRS_PASSWORD}" >> "signing-envfile"
 
 if [[ -f "${artifact:?}" ]]; then
   echo "${ARTIFACTORY_PASSWORD}" | podman login --password-stdin --username "${ARTIFACTORY_USERNAME}" artifactory.corp.mongodb.com
