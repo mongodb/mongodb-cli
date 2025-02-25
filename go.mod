@@ -1,6 +1,7 @@
 module github.com/mongodb/mongodb-cli/mongocli/v2
 
 go 1.22.5
+toolchain go1.23.6
 
 require (
 	github.com/AlecAivazis/survey/v2 v2.3.7
@@ -30,7 +31,7 @@ require (
 	go.mongodb.org/atlas v0.37.0
 	go.mongodb.org/mongo-driver v1.17.2
 	go.mongodb.org/ops-manager v0.60.0
-	golang.org/x/crypto v0.33.0
+	golang.org/x/crypto v0.35.0
 	golang.org/x/mod v0.23.0
 	golang.org/x/tools v0.30.0
 	gopkg.in/yaml.v3 v3.0.1
