@@ -66,7 +66,7 @@ func (opts *DescribeOpts) validateArg() error {
 	return nil
 }
 
-func (opts *DescribeOpts) cluster() (interface{}, error) {
+func (opts *DescribeOpts) cluster() (any, error) {
 	if opts.ConfigOutput() == "" {
 		return opts.store.OpsManagerCluster(opts.ConfigProjectID(), opts.name)
 	}

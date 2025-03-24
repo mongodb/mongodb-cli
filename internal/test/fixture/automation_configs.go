@@ -221,7 +221,7 @@ func AutomationConfigWithOneReplicaSet(name string, disabled bool) *opsmngr.Auto
 					Storage: &opsmngr.Storage{
 						DBPath: "/data/db/",
 					},
-					Security: &map[string]interface{}{
+					Security: &map[string]any{
 						"test": "test",
 					},
 					SystemLog: opsmngr.SystemLog{
@@ -440,7 +440,7 @@ func EmptyAutomationConfig() *opsmngr.AutomationConfig {
 }
 
 func MultiMongosAutomationConfig() *opsmngr.AutomationConfig {
-	engineConfig := make(map[string]interface{})
+	engineConfig := make(map[string]any)
 	engineConfig["cacheSizeGB"] = 0.5
 
 	return &opsmngr.AutomationConfig{

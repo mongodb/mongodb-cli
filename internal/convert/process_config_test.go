@@ -49,19 +49,19 @@ func Test_newReplicaSetProcessConfig(t *testing.T) {
 			Storage: &opsmngr.Storage{
 				DBPath:         "/data/db",
 				DirectoryPerDB: pointer.Get(true),
-				WiredTiger: &map[string]interface{}{
-					"collectionConfig": map[string]interface{}{},
-					"engineConfig": map[string]interface{}{
+				WiredTiger: &map[string]any{
+					"collectionConfig": map[string]any{},
+					"engineConfig": map[string]any{
 						"cacheSizeGB": 1,
 					},
-					"indexConfig": map[string]interface{}{},
+					"indexConfig": map[string]any{},
 				},
 			},
 			SystemLog: opsmngr.SystemLog{
 				Destination: "file",
 				Path:        "/data/log/mongodb.log",
 			},
-			SetParameter: &map[string]interface{}{
+			SetParameter: &map[string]any{
 				"param": "param",
 			},
 		},
@@ -118,15 +118,15 @@ func Test_newReplicaSetProcessConfig(t *testing.T) {
 			Mode:     "disabled",
 			FIPSMode: &fipsMode,
 		},
-		SetParameter: &map[string]interface{}{
+		SetParameter: &map[string]any{
 			"param": "param",
 		},
-		WiredTiger: &map[string]interface{}{
-			"collectionConfig": map[string]interface{}{},
-			"engineConfig": map[string]interface{}{
+		WiredTiger: &map[string]any{
+			"collectionConfig": map[string]any{},
+			"engineConfig": map[string]any{
 				"cacheSizeGB": 1,
 			},
-			"indexConfig": map[string]interface{}{},
+			"indexConfig": map[string]any{},
 		},
 	}
 	result := newReplicaSetProcessConfig(omm, omp)
@@ -159,14 +159,14 @@ func Test_newConfigRSProcess(t *testing.T) {
 		Disabled:                    false,
 		Hidden:                      pointer.Get(false),
 		TLS:                         &TLS{Mode: "disabled"},
-		WiredTiger: &map[string]interface{}{
-			"collectionConfig": map[string]interface{}{},
-			"engineConfig": map[string]interface{}{
+		WiredTiger: &map[string]any{
+			"collectionConfig": map[string]any{},
+			"engineConfig": map[string]any{
 				"cacheSizeGB": 1,
 			},
-			"indexConfig": map[string]interface{}{},
+			"indexConfig": map[string]any{},
 		},
-		SetParameter: &map[string]interface{}{
+		SetParameter: &map[string]any{
 			"param": "param",
 		},
 	}
@@ -189,12 +189,12 @@ func Test_newConfigRSProcess(t *testing.T) {
 			Storage: &opsmngr.Storage{
 				DBPath:         "/data/db",
 				DirectoryPerDB: pointer.Get(true),
-				WiredTiger: &map[string]interface{}{
-					"collectionConfig": map[string]interface{}{},
-					"engineConfig": map[string]interface{}{
+				WiredTiger: &map[string]any{
+					"collectionConfig": map[string]any{},
+					"engineConfig": map[string]any{
 						"cacheSizeGB": 1,
 					},
-					"indexConfig": map[string]interface{}{},
+					"indexConfig": map[string]any{},
 				},
 			},
 			SystemLog: opsmngr.SystemLog{
@@ -202,7 +202,7 @@ func Test_newConfigRSProcess(t *testing.T) {
 				Path:        "/data/log/mongodb.log",
 			},
 			Sharding: &opsmngr.Sharding{ClusterRole: "configsvr"},
-			SetParameter: &map[string]interface{}{
+			SetParameter: &map[string]any{
 				"param": "param",
 			},
 		},
@@ -244,14 +244,14 @@ func Test_newConfigRSProcess_audit(t *testing.T) {
 		Disabled:                    false,
 		Hidden:                      pointer.Get(false),
 		TLS:                         &TLS{Mode: "disabled"},
-		WiredTiger: &map[string]interface{}{
-			"collectionConfig": map[string]interface{}{},
-			"engineConfig": map[string]interface{}{
+		WiredTiger: &map[string]any{
+			"collectionConfig": map[string]any{},
+			"engineConfig": map[string]any{
 				"cacheSizeGB": 1,
 			},
-			"indexConfig": map[string]interface{}{},
+			"indexConfig": map[string]any{},
 		},
-		SetParameter: &map[string]interface{}{
+		SetParameter: &map[string]any{
 			"param": "param",
 		},
 	}
@@ -271,12 +271,12 @@ func Test_newConfigRSProcess_audit(t *testing.T) {
 			Storage: &opsmngr.Storage{
 				DBPath:         "/data/db",
 				DirectoryPerDB: pointer.Get(true),
-				WiredTiger: &map[string]interface{}{
-					"collectionConfig": map[string]interface{}{},
-					"engineConfig": map[string]interface{}{
+				WiredTiger: &map[string]any{
+					"collectionConfig": map[string]any{},
+					"engineConfig": map[string]any{
 						"cacheSizeGB": 1,
 					},
-					"indexConfig": map[string]interface{}{},
+					"indexConfig": map[string]any{},
 				},
 			},
 			SystemLog: opsmngr.SystemLog{
@@ -284,7 +284,7 @@ func Test_newConfigRSProcess_audit(t *testing.T) {
 				Path:        "/data/log/mongodb.log",
 			},
 			Sharding: &opsmngr.Sharding{ClusterRole: "configsvr"},
-			SetParameter: &map[string]interface{}{
+			SetParameter: &map[string]any{
 				"param": "param",
 			},
 		},
@@ -329,14 +329,14 @@ func Test_newReplicaSetProcess(t *testing.T) {
 		Disabled:                    false,
 		Hidden:                      pointer.Get(false),
 		TLS:                         &TLS{Mode: "disabled"},
-		WiredTiger: &map[string]interface{}{
-			"collectionConfig": map[string]interface{}{},
-			"engineConfig": map[string]interface{}{
+		WiredTiger: &map[string]any{
+			"collectionConfig": map[string]any{},
+			"engineConfig": map[string]any{
 				"cacheSizeGB": 1,
 			},
-			"indexConfig": map[string]interface{}{},
+			"indexConfig": map[string]any{},
 		},
-		SetParameter: &map[string]interface{}{
+		SetParameter: &map[string]any{
 			"enableLocalhostAuthBypass": "false",
 			"auditAuthorizationSuccess": "true",
 		},
@@ -360,19 +360,19 @@ func Test_newReplicaSetProcess(t *testing.T) {
 			Storage: &opsmngr.Storage{
 				DBPath:         "/data/db",
 				DirectoryPerDB: pointer.Get(true),
-				WiredTiger: &map[string]interface{}{
-					"collectionConfig": map[string]interface{}{},
-					"engineConfig": map[string]interface{}{
+				WiredTiger: &map[string]any{
+					"collectionConfig": map[string]any{},
+					"engineConfig": map[string]any{
 						"cacheSizeGB": 1,
 					},
-					"indexConfig": map[string]interface{}{},
+					"indexConfig": map[string]any{},
 				},
 			},
 			SystemLog: opsmngr.SystemLog{
 				Destination: "file",
 				Path:        "/data/log/mongodb.log",
 			},
-			SetParameter: &map[string]interface{}{
+			SetParameter: &map[string]any{
 				"enableLocalhostAuthBypass": "false",
 				"auditAuthorizationSuccess": "true",
 			},
@@ -404,7 +404,7 @@ func Test_newMongosProcessConfig(t *testing.T) {
 				Destination: "file",
 				Path:        "/data/mongos/mongodb.log",
 			},
-			SetParameter: &map[string]interface{}{
+			SetParameter: &map[string]any{
 				"param": "param",
 			},
 			AuditLog: &opsmngr.AuditLog{
@@ -443,7 +443,7 @@ func Test_newMongosProcessConfig(t *testing.T) {
 		ProcessType:                 "mongos",
 		Version:                     "3.6.21-ent",
 		Disabled:                    false,
-		SetParameter: &map[string]interface{}{
+		SetParameter: &map[string]any{
 			"param": "param",
 		},
 	}

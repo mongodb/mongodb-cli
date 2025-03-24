@@ -25,7 +25,7 @@ import (
 func TestURL(t *testing.T) {
 	tests := []struct {
 		name    string
-		val     interface{}
+		val     any
 		wantErr bool
 	}{
 		{
@@ -59,7 +59,7 @@ func TestURL(t *testing.T) {
 func TestOptionalObjectID(t *testing.T) {
 	tests := []struct {
 		name    string
-		val     interface{}
+		val     any
 		wantErr bool
 	}{
 		{
@@ -272,7 +272,7 @@ func TestOptionalURL(t *testing.T) {
 	t.Parallel()
 	tests := []struct {
 		name    string
-		val     interface{}
+		val     any
 		wantErr bool
 	}{
 		{

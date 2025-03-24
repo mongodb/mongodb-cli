@@ -55,7 +55,7 @@ func (opts *ListOpts) Run() error {
 	return opts.Print(r)
 }
 
-func (opts *ListOpts) clusters() (interface{}, error) {
+func (opts *ListOpts) clusters() (any, error) {
 	if opts.IsPlainOutput() {
 		return opts.store.ProjectClusters(opts.ConfigProjectID(), nil)
 	}

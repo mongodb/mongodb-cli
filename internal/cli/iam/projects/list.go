@@ -48,7 +48,7 @@ func (opts *ListOpts) initStore(ctx context.Context) func() error {
 }
 
 func (opts *ListOpts) Run() error {
-	var r interface{}
+	var r any
 	var err error
 	listOptions := opts.NewListOptions()
 	if opts.ConfigOrgID() != "" && config.Service() == config.OpsManagerService {
