@@ -26,7 +26,7 @@ import (
 )
 
 // toString tries to cast an interface to string.
-func toString(val interface{}) (string, error) {
+func toString(val any) (string, error) {
 	var u string
 	var ok bool
 	if u, ok = val.(string); !ok {
@@ -36,7 +36,7 @@ func toString(val interface{}) (string, error) {
 }
 
 // URL validates a value is a valid URL for the cli store.
-func URL(val interface{}) error {
+func URL(val any) error {
 	s, err := toString(val)
 	if err != nil {
 		return err
@@ -53,7 +53,7 @@ func URL(val interface{}) error {
 }
 
 // OptionalURL validates a value is a valid URL for the cli store.
-func OptionalURL(val interface{}) error {
+func OptionalURL(val any) error {
 	if val == nil {
 		return nil
 	}
@@ -69,7 +69,7 @@ func OptionalURL(val interface{}) error {
 }
 
 // OptionalObjectID validates a value is a valid ObjectID.
-func OptionalObjectID(val interface{}) error {
+func OptionalObjectID(val any) error {
 	if val == nil {
 		return nil
 	}

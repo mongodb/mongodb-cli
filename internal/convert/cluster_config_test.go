@@ -184,7 +184,7 @@ func TestClusterConfig_PatchAutomationConfig(t *testing.T) {
 								Destination: file,
 								Path:        "/data/db/audit.log",
 							},
-							Security: &map[string]interface{}{
+							Security: &map[string]any{
 								"test": "test",
 							},
 						},
@@ -304,10 +304,10 @@ func TestClusterConfig_PatchAutomationConfig(t *testing.T) {
 							Port:     27017,
 							Priority: pointer.Get[float64](1),
 							Votes:    pointer.Get[float64](1),
-							Security: &map[string]interface{}{
+							Security: &map[string]any{
 								"test": "test",
 							},
-							SetParameter: &map[string]interface{}{
+							SetParameter: &map[string]any{
 								"test": "test",
 							},
 						},
@@ -363,10 +363,10 @@ func TestClusterConfig_PatchAutomationConfig(t *testing.T) {
 								Destination: file,
 								Path:        "/data/db/mongodb.log",
 							},
-							Security: &map[string]interface{}{
+							Security: &map[string]any{
 								"test": "test",
 							},
-							SetParameter: &map[string]interface{}{
+							SetParameter: &map[string]any{
 								"test": "test",
 							},
 						},
@@ -468,7 +468,7 @@ func TestClusterConfig_PatchAutomationConfig(t *testing.T) {
 								Destination: file,
 								Path:        "/data/db/audit.log",
 							},
-							Security: &map[string]interface{}{
+							Security: &map[string]any{
 								"test": "test",
 							},
 						},
@@ -598,7 +598,7 @@ func TestClusterConfig_PatchAutomationConfig(t *testing.T) {
 								Destination: file,
 								Path:        "/data/db/audit.log",
 							},
-							Security: &map[string]interface{}{
+							Security: &map[string]any{
 								"test": "test",
 							},
 						},
@@ -837,9 +837,9 @@ func TestClusterConfig_PatchAutomationConfig(t *testing.T) {
 					{
 						ConfigServerReplica: "configRS",
 						Name:                "test_config",
-						Collections:         make([]*map[string]interface{}, 0),
+						Collections:         make([]*map[string]any, 0),
 						Draining:            make([]string, 0),
-						Tags:                make([]*map[string]interface{}, 0),
+						Tags:                make([]*map[string]any, 0),
 						Shards: []*opsmngr.Shard{
 							{
 								ID:   "myShard_0",
@@ -1074,9 +1074,9 @@ func TestClusterConfig_PatchAutomationConfig(t *testing.T) {
 					{
 						ConfigServerReplica: "configRS",
 						Name:                "test_config",
-						Collections:         make([]*map[string]interface{}, 0),
+						Collections:         make([]*map[string]any, 0),
 						Draining:            make([]string, 0),
-						Tags:                make([]*map[string]interface{}, 0),
+						Tags:                make([]*map[string]any, 0),
 						Shards: []*opsmngr.Shard{
 							// Old
 							{

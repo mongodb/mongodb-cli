@@ -107,7 +107,7 @@ func (opts *OutputOpts) IsCygwinTerminal() bool {
 }
 
 // Print will evaluate the defined format and try to parse it accordingly outputting to the set writer.
-func (opts *OutputOpts) Print(o interface{}) error {
+func (opts *OutputOpts) Print(o any) error {
 	if opts.ConfigOutput() == jsonFormat {
 		return jsonwriter.Print(opts.ConfigWriter(), o)
 	}

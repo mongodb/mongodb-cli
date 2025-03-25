@@ -18,7 +18,6 @@ package auth
 
 import (
 	"bytes"
-	"context"
 	"errors"
 	"fmt"
 	"testing"
@@ -76,7 +75,7 @@ func Test_loginOpts_Run(t *testing.T) {
 		ExpiresIn:       300,
 		Interval:        10,
 	}
-	ctx := context.TODO()
+	ctx := t.Context()
 	mockFlow.
 		EXPECT().
 		RequestCode(ctx).
@@ -129,11 +128,11 @@ Successfully logged in as test@10gen.com.
 
 type confirmMock struct{}
 
-func (confirmMock) Prompt(_ *survey.PromptConfig) (interface{}, error) {
+func (confirmMock) Prompt(_ *survey.PromptConfig) (any, error) {
 	return true, nil
 }
 
-func (confirmMock) Cleanup(_ *survey.PromptConfig, _ interface{}) error {
+func (confirmMock) Cleanup(_ *survey.PromptConfig, _ any) error {
 	return nil
 }
 

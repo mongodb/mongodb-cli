@@ -130,12 +130,12 @@ func generateRSConfig(filename, hostname, clusterName, version, fcVersion string
 					Port:     27000,
 					Priority: pointer.Get[float64](1),
 					Votes:    pointer.Get[float64](1),
-					WiredTiger: &map[string]interface{}{
-						"collectionConfig": map[string]interface{}{},
-						"engineConfig": map[string]interface{}{
+					WiredTiger: &map[string]any{
+						"collectionConfig": map[string]any{},
+						"engineConfig": map[string]any{
 							"cacheSizeGB": 1,
 						},
-						"indexConfig": map[string]interface{}{},
+						"indexConfig": map[string]any{},
 					},
 				},
 				{
@@ -145,12 +145,12 @@ func generateRSConfig(filename, hostname, clusterName, version, fcVersion string
 					Port:     27001,
 					Priority: pointer.Get[float64](1),
 					Votes:    pointer.Get[float64](1),
-					WiredTiger: &map[string]interface{}{
-						"collectionConfig": map[string]interface{}{},
-						"engineConfig": map[string]interface{}{
+					WiredTiger: &map[string]any{
+						"collectionConfig": map[string]any{},
+						"engineConfig": map[string]any{
 							"cacheSizeGB": 1,
 						},
-						"indexConfig": map[string]interface{}{},
+						"indexConfig": map[string]any{},
 					},
 				},
 				{
@@ -160,12 +160,12 @@ func generateRSConfig(filename, hostname, clusterName, version, fcVersion string
 					Port:     27002,
 					Priority: pointer.Get[float64](1),
 					Votes:    pointer.Get[float64](1),
-					WiredTiger: &map[string]interface{}{
-						"collectionConfig": map[string]interface{}{},
-						"engineConfig": map[string]interface{}{
+					WiredTiger: &map[string]any{
+						"collectionConfig": map[string]any{},
+						"engineConfig": map[string]any{
 							"cacheSizeGB": 1,
 						},
-						"indexConfig": map[string]interface{}{},
+						"indexConfig": map[string]any{},
 					},
 				},
 			},
@@ -236,12 +236,12 @@ func generateShardedConfig(filename, hostname, clusterName, version, fcVersion s
 					Port:     29000,
 					Priority: pointer.Get[float64](1),
 					Votes:    pointer.Get[float64](1),
-					WiredTiger: &map[string]interface{}{
-						"collectionConfig": map[string]interface{}{},
-						"engineConfig": map[string]interface{}{
+					WiredTiger: &map[string]any{
+						"collectionConfig": map[string]any{},
+						"engineConfig": map[string]any{
 							"cacheSizeGB": 1,
 						},
-						"indexConfig": map[string]interface{}{},
+						"indexConfig": map[string]any{},
 					},
 				},
 				{
@@ -251,12 +251,12 @@ func generateShardedConfig(filename, hostname, clusterName, version, fcVersion s
 					Port:     29001,
 					Priority: pointer.Get[float64](1),
 					Votes:    pointer.Get[float64](1),
-					WiredTiger: &map[string]interface{}{
-						"collectionConfig": map[string]interface{}{},
-						"engineConfig": map[string]interface{}{
+					WiredTiger: &map[string]any{
+						"collectionConfig": map[string]any{},
+						"engineConfig": map[string]any{
 							"cacheSizeGB": 1,
 						},
-						"indexConfig": map[string]interface{}{},
+						"indexConfig": map[string]any{},
 					},
 				},
 				{
@@ -266,12 +266,12 @@ func generateShardedConfig(filename, hostname, clusterName, version, fcVersion s
 					Port:     29002,
 					Priority: pointer.Get[float64](1),
 					Votes:    pointer.Get[float64](1),
-					WiredTiger: &map[string]interface{}{
-						"collectionConfig": map[string]interface{}{},
-						"engineConfig": map[string]interface{}{
+					WiredTiger: &map[string]any{
+						"collectionConfig": map[string]any{},
+						"engineConfig": map[string]any{
 							"cacheSizeGB": 1,
 						},
-						"indexConfig": map[string]interface{}{},
+						"indexConfig": map[string]any{},
 					},
 				},
 			},
@@ -294,12 +294,12 @@ func generateShardedConfig(filename, hostname, clusterName, version, fcVersion s
 						Port:     27000,
 						Priority: pointer.Get[float64](1),
 						Votes:    pointer.Get[float64](1),
-						WiredTiger: &map[string]interface{}{
-							"collectionConfig": map[string]interface{}{},
-							"engineConfig": map[string]interface{}{
+						WiredTiger: &map[string]any{
+							"collectionConfig": map[string]any{},
+							"engineConfig": map[string]any{
 								"cacheSizeGB": 0.5,
 							},
-							"indexConfig": map[string]interface{}{},
+							"indexConfig": map[string]any{},
 						},
 					},
 					{
@@ -309,12 +309,12 @@ func generateShardedConfig(filename, hostname, clusterName, version, fcVersion s
 						Port:     27001,
 						Priority: pointer.Get[float64](1),
 						Votes:    pointer.Get[float64](1),
-						WiredTiger: &map[string]interface{}{
-							"collectionConfig": map[string]interface{}{},
-							"engineConfig": map[string]interface{}{
+						WiredTiger: &map[string]any{
+							"collectionConfig": map[string]any{},
+							"engineConfig": map[string]any{
 								"cacheSizeGB": 0.5,
 							},
-							"indexConfig": map[string]interface{}{},
+							"indexConfig": map[string]any{},
 						},
 					},
 					{
@@ -324,12 +324,12 @@ func generateShardedConfig(filename, hostname, clusterName, version, fcVersion s
 						Port:     27002,
 						Priority: pointer.Get[float64](1),
 						Votes:    pointer.Get[float64](1),
-						WiredTiger: &map[string]interface{}{
-							"collectionConfig": map[string]interface{}{},
-							"engineConfig": map[string]interface{}{
+						WiredTiger: &map[string]any{
+							"collectionConfig": map[string]any{},
+							"engineConfig": map[string]any{
 								"cacheSizeGB": 0.5,
 							},
-							"indexConfig": map[string]interface{}{},
+							"indexConfig": map[string]any{},
 						},
 					},
 				},
@@ -344,12 +344,12 @@ func generateShardedConfig(filename, hostname, clusterName, version, fcVersion s
 						Port:     28000,
 						Priority: pointer.Get[float64](1),
 						Votes:    pointer.Get[float64](1),
-						WiredTiger: &map[string]interface{}{
-							"collectionConfig": map[string]interface{}{},
-							"engineConfig": map[string]interface{}{
+						WiredTiger: &map[string]any{
+							"collectionConfig": map[string]any{},
+							"engineConfig": map[string]any{
 								"cacheSizeGB": 0.5,
 							},
-							"indexConfig": map[string]interface{}{},
+							"indexConfig": map[string]any{},
 						},
 					},
 					{
@@ -359,12 +359,12 @@ func generateShardedConfig(filename, hostname, clusterName, version, fcVersion s
 						Port:     28001,
 						Priority: pointer.Get[float64](1),
 						Votes:    pointer.Get[float64](1),
-						WiredTiger: &map[string]interface{}{
-							"collectionConfig": map[string]interface{}{},
-							"engineConfig": map[string]interface{}{
+						WiredTiger: &map[string]any{
+							"collectionConfig": map[string]any{},
+							"engineConfig": map[string]any{
 								"cacheSizeGB": 0.5,
 							},
-							"indexConfig": map[string]interface{}{},
+							"indexConfig": map[string]any{},
 						},
 					},
 					{
@@ -374,12 +374,12 @@ func generateShardedConfig(filename, hostname, clusterName, version, fcVersion s
 						Port:     28002,
 						Priority: pointer.Get[float64](1),
 						Votes:    pointer.Get[float64](1),
-						WiredTiger: &map[string]interface{}{
-							"collectionConfig": map[string]interface{}{},
-							"engineConfig": map[string]interface{}{
+						WiredTiger: &map[string]any{
+							"collectionConfig": map[string]any{},
+							"engineConfig": map[string]any{
 								"cacheSizeGB": 0.5,
 							},
-							"indexConfig": map[string]interface{}{},
+							"indexConfig": map[string]any{},
 						},
 					},
 				},

@@ -27,6 +27,13 @@ import (
 	"github.com/gemalto/kmip-go/ttlv"
 )
 
+const (
+	KMIPMajorVersion1 = 1
+	KMIPMajorVersion2 = 2
+	KMIPMinorVersion0 = 0
+	KMIPMinorVersion2 = 2
+)
+
 // Attributes key attributes required by Create request operation.
 type Attributes struct {
 	CryptographicAlgorithm kmip14.CryptographicAlgorithm
@@ -90,9 +97,11 @@ type Version struct {
 	Minor int
 }
 
-var V10 = Version{Major: 1, Minor: 0} // first KMIP version
-var V12 = Version{Major: 1, Minor: 2} //nolint:gomnd // KMIP version that implemented encrypt / decrypt
-var V20 = Version{Major: 2, Minor: 0} //nolint:gomnd // KMIP major version change (create operation signature changed)
+var (
+	V10 = Version{Major: KMIPMajorVersion1, Minor: KMIPMinorVersion0} // first KMIP version
+	V12 = Version{Major: KMIPMajorVersion1, Minor: KMIPMinorVersion2} // KMIP version that implemented encrypt / decrypt
+	V20 = Version{Major: KMIPMajorVersion2, Minor: KMIPMinorVersion0} // KMIP major version change (create operation signature changed)
+)
 
 var versions = map[Version]bool{V10: true, V12: true, V20: true}
 
@@ -236,7 +245,7 @@ func validate(config *Config) error {
 }
 
 // sendRequest sends a request message to KMIP server.
-func (kc *Client) sendRequest(payload interface{}, operation kmip14.Operation) (*kmip.ResponseBatchItem, *ttlv.Decoder, error) {
+func (kc *Client) sendRequest(payload any, operation kmip14.Operation) (*kmip.ResponseBatchItem, *ttlv.Decoder, error) {
 	conn, err := tls.Dial("tcp", fmt.Sprintf("%s:%d", kc.ip, kc.port), &kc.tlsConfig)
 	if err != nil {
 		return nil, nil, err
@@ -306,7 +315,7 @@ func (kc *Client) GetSymmetricKey(keyID string) ([]byte, error) {
 
 // CreateSymmetricKey creates a symmetric key on KMIP server.
 func (kc *Client) CreateSymmetricKey(length int32) (*string, error) {
-	var payload interface{}
+	var payload any
 	if kc.version.Major >= V20.Major {
 		payload = CreateRequestV20{
 			ObjectType: kmip20.ObjectTypeSymmetricKey,

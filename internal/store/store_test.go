@@ -139,6 +139,7 @@ func TestWithContext(t *testing.T) {
 		t.Fatalf("New() unexpected error: %v", err)
 	}
 
+	//nolint:usetesting
 	if c.ctx != context.Background() {
 		t.Errorf("New() got %v; expected %v", c.ctx, context.Background())
 	}
@@ -146,6 +147,7 @@ func TestWithContext(t *testing.T) {
 	type myCustomType string
 	var k, v myCustomType = "custom key", "custom value"
 
+	//nolint:usetesting
 	ctx := context.WithValue(context.Background(), k, v)
 
 	c, err = New(Service(config.CloudManagerService), WithContext(ctx))

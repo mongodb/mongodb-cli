@@ -46,7 +46,7 @@ func TestConfig(t *testing.T) {
 		key := os.Getenv("MCLI_PRIVATE_API_KEY")
 		_ = os.Unsetenv("MCLI_PRIVATE_API_KEY")
 		t.Cleanup(func() {
-			_ = os.Setenv("MCLI_PRIVATE_API_KEY", key)
+			t.Setenv("MCLI_PRIVATE_API_KEY", key)
 		})
 		pty, tty, err := pseudotty.Open()
 		if err != nil {
@@ -145,7 +145,7 @@ func TestConfig(t *testing.T) {
 		if err != nil {
 			t.Fatalf("unexpected error: %v, resp: %v", err, string(resp))
 		}
-		var config map[string]interface{}
+		var config map[string]any
 		if err := json.Unmarshal(resp, &config); err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}

@@ -136,10 +136,10 @@ func newShardingConfig(c *ClusterConfig) *opsmngr.ShardingConfig {
 		ConfigServerReplica: c.Config.Name,
 		Tags:                c.Tags,
 		Draining:            make([]string, 0),
-		Collections:         make([]*map[string]interface{}, 0),
+		Collections:         make([]*map[string]any, 0),
 	}
 	if rs.Tags == nil {
-		rs.Tags = make([]*map[string]interface{}, 0)
+		rs.Tags = make([]*map[string]any, 0)
 	}
 
 	return rs

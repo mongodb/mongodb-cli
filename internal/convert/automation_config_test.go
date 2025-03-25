@@ -71,7 +71,7 @@ func TestFromAutomationConfig(t *testing.T) {
 								Mode:                       "Mode",
 								PEMKeyFile:                 "PEMKeyFile",
 							},
-							Security: &map[string]interface{}{
+							Security: &map[string]any{
 								"test": "test",
 							},
 						},
@@ -129,7 +129,7 @@ func TestFromAutomationConfig(t *testing.T) {
 								Mode:                       "Mode",
 								PEMKeyFile:                 "PEMKeyFile",
 							},
-							Security: &map[string]interface{}{
+							Security: &map[string]any{
 								"test": "test",
 							},
 						},
@@ -228,7 +228,7 @@ func TestFromAutomationConfig(t *testing.T) {
 		t.Parallel()
 		config := fixture.MultiMongosAutomationConfig()
 
-		engineConfig := make(map[string]interface{})
+		engineConfig := make(map[string]any)
 		engineConfig["cacheSizeGB"] = 0.5
 		expected := []*ClusterConfig{
 			{
