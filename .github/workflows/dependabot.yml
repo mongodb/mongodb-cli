@@ -52,6 +52,9 @@
                   ],
                   "assignee": {
                     "name": "'"${JIRA_ASSIGNEE}"'"
+                  },
+                  "reporter": {
+                    "name": "'"${JIRA_ASSIGNEE}"'"
                   }
               }
             }')
