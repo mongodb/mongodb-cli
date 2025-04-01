@@ -1,7 +1,6 @@
 module github.com/mongodb/mongodb-cli/mongocli/v2
 
 go 1.24.1
-
 require (
 	github.com/AlecAivazis/survey/v2 v2.3.7
 	github.com/Masterminds/semver/v3 v3.3.1
@@ -24,7 +23,7 @@ require (
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
 	github.com/spf13/afero v1.14.0
 	github.com/spf13/cobra v1.9.1
-	github.com/spf13/viper v1.20.0
+	github.com/spf13/viper v1.20.1
 	github.com/stretchr/testify v1.10.0
 	github.com/tangzero/inflector v1.0.0
 	go.mongodb.org/atlas v0.37.0
