@@ -359,6 +359,25 @@ tasks:
           permissions: public-read
           content_type: ${content_type|application/x-gzip}
           display_name: downloads-center-
+      - command: s3.put
+        params:
+          role_arn: "arn:aws:iam::119629040606:role/s3-access.cdn-origin-mongocli"
+          local_files_include_filter:
+            - src/github.com/mongodb/mongodb-cli/dist/*.tar.gz
+            - src/github.com/mongodb/mongodb-cli/dist/*.zip
+            - src/github.com/mongodb/mongodb-cli/dist/*.deb
+            - src/github.com/mongodb/mongodb-cli/dist/*.rpm
+            - src/github.com/mongodb/mongodb-cli/dist/*.tgz
+            - src/github.com/mongodb/mongodb-cli/dist/*.json
+            - src/github.com/mongodb/mongodb-cli/dist/*.msi
+            - src/github.com/mongodb/mongodb-cli/dist/*.sig
+          remote_file: mongocli/
+          build_variants:
+            - release_mongocli_github
+          bucket: cdn-origin-mongocli
+          permissions: private
+          content_type: ${content_type|application/x-gzip}
+          display_name: downloads-center-new-
       - func: "send slack notification"
   - name: push_mongocli_generate
     patchable: false
