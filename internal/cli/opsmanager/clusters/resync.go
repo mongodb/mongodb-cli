@@ -78,7 +78,7 @@ func (opts *resyncOpts) Confirm() error {
 	}
 
 	prompt := &survey.Confirm{
-		Message: fmt.Sprintf("Are you sure you want to reclaim free space for: %s", process),
+		Message: fmt.Sprintf("Are you sure you want to start an initial sync for: %s", process),
 	}
 	return survey.AskOne(prompt, &opts.confirm)
 }
