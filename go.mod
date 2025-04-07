@@ -1,6 +1,7 @@
 module github.com/mongodb/mongodb-cli/mongocli/v2
 
 go 1.24.1
+
 require (
 	github.com/AlecAivazis/survey/v2 v2.3.7
 	github.com/Masterminds/semver/v3 v3.3.1
