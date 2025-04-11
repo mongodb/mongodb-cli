@@ -7,7 +7,7 @@ The MongoDB CLI is a modern command line interface that enables you to manage yo
 
 ![mongocli-atlas-quickstart](https://user-images.githubusercontent.com/461027/126986233-0dd5c82a-2c75-4887-ab66-eb018c59e093.gif)
 
-Use simple, one-line commands to interact with MongoDB Atlas, Cloud Manager, or Ops Manager, and automate management tasks for your deployments.
+Use simple, one-line commands to interact with Ops Manager or Cloud Manager, and automate management tasks for your deployments.
 
 ## Documentation
 
@@ -65,21 +65,17 @@ make install
 To get a list of available commands, run `mongocli help`
 or check our [documentation](https://docs.mongodb.com/mongocli/master/) for more details.
 
-### Configuring MongoCLI with Atlas
-To use `mongocli` with Atlas, open your terminal, run `mongocli auth login`, and follow the prompted steps.
-
 ### Configuring MongoCLI with Ops Manager and Cloud Manager
 
 #### Getting API Keys (Ops manager / Cloud Manager)
 To use `mongocli`, create API keys. To learn more, see the documentation for the service you're using:
-- [Atlas](https://docs.atlas.mongodb.com/configure-api-access/),
 - [Ops Manager](https://docs.opsmanager.mongodb.com/current/tutorial/configure-public-api-access/),
 - [Cloud Manager](https://docs.cloudmanager.mongodb.com/tutorial/manage-programmatic-api-keys/)
 
 #### Set up your credentials
 To set up your credentials, run `mongocli config`, or use [env variables](https://docs.mongodb.com/mongocli/stable/configure/environment-variables/) instead.
 
-If you're working with Atlas Gov, Ops Manager or Cloud Manager you need to define the service using `--service`
+If you're working with Ops Manager or Cloud Manager you need to define the service using `--service`
 
 - For Ops Manager, `mongocli config --service ops-manager`
 - For Cloud Manager, `mongocli config --service cloud-manager`
