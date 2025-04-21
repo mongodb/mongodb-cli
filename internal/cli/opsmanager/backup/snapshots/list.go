@@ -63,6 +63,7 @@ func ListBuilder() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "list <clusterId>",
 		Short:   "List snapshots for a project and cluster.",
+		Long:    "List snapshots for a project and cluster, in order from newest to oldest retained snapshot.",
 		Aliases: []string{"ls"},
 		Args:    require.ExactArgs(1),
 		Annotations: map[string]string{
