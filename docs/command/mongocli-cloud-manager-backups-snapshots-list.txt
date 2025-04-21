@@ -14,6 +14,8 @@ mongocli cloud-manager backups snapshots list
 
 List snapshots for a project and cluster.
 
+Returns snapshots in order from newest to oldest retained snapshot.
+
 Syntax
 ------
 
