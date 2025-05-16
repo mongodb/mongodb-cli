@@ -212,4 +212,5 @@ const (
 	Debug                           = "Debug log level."
 	RequiredRole                    = "To use this command, you must authenticate with a user account or an API key with the %s role."
 	UpdateWarning                   = " Passing this flag replaces preexisting data."
+	TargetVersion                   = " The version you want to upgrade to."
 )

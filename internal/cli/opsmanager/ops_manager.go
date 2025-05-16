@@ -19,6 +19,7 @@ import (
 	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/cli/mongocli/events"
 	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/cli/mongocli/performanceadvisor"
 	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/cli/opsmanager/admin"
+	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/cli/opsmanager/advisor"
 	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/cli/opsmanager/agents"
 	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/cli/opsmanager/automation"
 	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/cli/opsmanager/backup"
@@ -93,7 +94,8 @@ func Builder() *cobra.Command {
 		softwarecompotents.Builder(),
 		featurepolicies.Builder(),
 		serverusage.Builder(),
-		livemigrations.Builder())
+		livemigrations.Builder(),
+		advisor.Builder())
 
 	cmd.PersistentFlags().BoolVarP(&debugLevel, flag.Debug, flag.DebugShort, false, usage.Debug)
 	_ = cmd.PersistentFlags().MarkHidden(flag.Debug)
