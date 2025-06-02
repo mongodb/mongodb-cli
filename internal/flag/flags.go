@@ -183,4 +183,5 @@ const (
 	KMIPClientCertificatePassword   = "kmipClientCertificatePassword"   //nolint:gosec // KMIPClientCertificatePassword flag
 	KMIPUsername                    = "kmipUsername"                    // KMIPUsername flag
 	KMIPPassword                    = "kmipPassword"                    // KMIPPassword flag
+	TargetVersion                   = "targetVersion"                   // TargetVersion flag
 )
