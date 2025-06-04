@@ -153,6 +153,8 @@ const (
 	LogTypes                        = "Array of strings specifying the types of logs to collect."
 	SizeRequestedPerFileBytes       = "Size for each log file in bytes."
 	LogRedacted                     = "Flag that indicates whether to replace emails, hostnames, IP addresses, and namespaces in API responses involving this job with random string values."
+	LogCollectionFromDate           = "Timestamp to filter the logs within the range >= LogCollectionFromDate and <= LogCollectionToDate."
+	LogCollectionToDate             = "Timestamp to filter the logs within the range >= LogCollectionFromDate and <= LogCollectionToDate."
 	ServerUsageSkipRedacted         = "Flag that indicates whether to skip the redaction of sensitive values. If you set this flag, Ops Manager logs the original values for hostnames, IP addresses, and namespaces in API responses for this job."
 	Sparse                          = "Flag that creates a sparse index. To learn more, see https://dochub.mongodb.org/core/index-sparse-manual."
 	Locale                          = "Locale that the ICU defines."
