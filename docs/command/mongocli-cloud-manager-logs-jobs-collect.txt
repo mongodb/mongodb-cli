@@ -59,6 +59,14 @@ Options
      - 
      - false
      - help for collect
+   * - --logCollectionFromDate
+     - int
+     - false
+     - Timestamp to filter the logs within the range >= LogCollectionFromDate and <= LogCollectionToDate.
+   * - --logCollectionToDate
+     - int
+     - false
+     - Timestamp to filter the logs within the range >= LogCollectionFromDate and <= LogCollectionToDate.
    * - -o, --output
      - string
      - false

@@ -36,6 +36,8 @@ type JobsCollectOpts struct {
 	resourceName              string
 	logTypes                  []string
 	sizeRequestedPerFileBytes int64
+	logCollectionFromDate     int64
+	logCollectionToDate       int64
 	redacted                  bool
 	store                     store.LogCollector
 }
@@ -63,8 +65,10 @@ func (opts *JobsCollectOpts) newLog() *opsmngr.LogCollectionJob {
 		ResourceType:              opts.resourceType,
 		ResourceName:              opts.resourceName,
 		Redacted:                  &opts.redacted,
-		SizeRequestedPerFileBytes: opts.sizeRequestedPerFileBytes,
 		LogTypes:                  opts.logTypes,
+		SizeRequestedPerFileBytes: opts.sizeRequestedPerFileBytes,
+		LogCollectionFromDate:     opts.logCollectionFromDate,
+		LogCollectionToDate:       opts.logCollectionToDate,
 	}
 }
 
@@ -108,7 +112,10 @@ func JobsCollectOptsBuilder() *cobra.Command {
 	cmd.Flags().StringSliceVar(&opts.logTypes, flag.TypeFlag, []string{}, usage.LogTypes)
 	cmd.Flags().Int64Var(&opts.sizeRequestedPerFileBytes, flag.SizeRequestedPerFileBytes, 0, usage.SizeRequestedPerFileBytes)
 	cmd.Flags().BoolVar(&opts.redacted, flag.Redacted, false, usage.LogRedacted)
+	cmd.Flags().Int64Var(&opts.logCollectionFromDate, flag.LogCollectionFromDate, 0, usage.LogCollectionFromDate)
+	cmd.Flags().Int64Var(&opts.logCollectionToDate, flag.LogCollectionToDate, 0, usage.LogCollectionToDate)
 
+	cmd.MarkFlagsRequiredTogether(flag.LogCollectionFromDate, flag.LogCollectionToDate)
 	_ = cmd.MarkFlagRequired(flag.SizeRequestedPerFileBytes)
 	_ = cmd.MarkFlagRequired(flag.TypeFlag)
 

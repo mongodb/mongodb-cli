@@ -132,6 +132,8 @@ const (
 	Strength                        = "strength"                        // Strength flag
 	SizeRequestedPerFileBytes       = "sizeRequestedPerFileBytes"       // SizeRequestedPerFileBytes flag
 	Redacted                        = "redacted"                        // Redacted flag
+	LogCollectionFromDate           = "logCollectionFromDate"           // LogCollectionFromDate flag
+	LogCollectionToDate             = "logCollectionToDate"             // LogCollectionToDate flag
 	SkipRedaction                   = "skipRedaction"                   // SkipRedaction flag
 	Verbose                         = "verbose"                         // Verbose flag
 	IP                              = "ip"                              // IP flag
