@@ -115,6 +115,7 @@ func JobsCollectOptsBuilder() *cobra.Command {
 	cmd.Flags().Int64Var(&opts.logCollectionFromDate, flag.LogCollectionFromDate, 0, usage.LogCollectionFromDate)
 	cmd.Flags().Int64Var(&opts.logCollectionToDate, flag.LogCollectionToDate, 0, usage.LogCollectionToDate)
 
+	cmd.MarkFlagsRequiredTogether(flag.LogCollectionFromDate, flag.LogCollectionToDate)
 	_ = cmd.MarkFlagRequired(flag.SizeRequestedPerFileBytes)
 	_ = cmd.MarkFlagRequired(flag.TypeFlag)
 
