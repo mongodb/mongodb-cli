@@ -55,6 +55,23 @@ func TestResync_Run(t *testing.T) {
 	}
 }
 
+func TestResync_RunWithoutConfirmation(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	mockStore := mocks.NewMockAutomationPatcher(ctrl)
+
+	opts := &resyncOpts{
+		store:       mockStore,
+		confirm:     false,
+		clusterName: "myReplicaSet2",
+	}
+
+	// No store methods should be called when confirm is false
+
+	if err := opts.Run(); err != nil {
+		t.Fatalf("Run() unexpected error: %v", err)
+	}
+}
+
 func TestResyncBuilder(t *testing.T) {
 	test.CmdValidator(
 		t,

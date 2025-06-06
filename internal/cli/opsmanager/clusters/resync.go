@@ -48,6 +48,9 @@ func (opts *resyncOpts) initStore(ctx context.Context) func() error {
 }
 
 func (opts *resyncOpts) Run() error {
+	if !opts.confirm {
+		return nil
+	}
 	current, err := opts.store.GetAutomationConfig(opts.ConfigProjectID())
 	if err != nil {
 		return err
