@@ -17,6 +17,7 @@
 package iam_test
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -45,7 +46,7 @@ func TestOrgAPIKeyAccessList(t *testing.T) {
 	entry := fmt.Sprintf("192.168.0.%d", n)
 
 	t.Run("Create", func(t *testing.T) {
-		cmd := exec.Command(cliPath, iamEntity,
+		cmd := exec.CommandContext(context.Background(), cliPath, iamEntity,
 			orgEntity,
 			apiKeysEntity,
 			apiKeyAccessListEntity,
@@ -64,7 +65,7 @@ func TestOrgAPIKeyAccessList(t *testing.T) {
 	})
 
 	t.Run("List", func(t *testing.T) {
-		cmd := exec.Command(cliPath, iamEntity,
+		cmd := exec.CommandContext(context.Background(), cliPath, iamEntity,
 			orgEntity,
 			apiKeysEntity,
 			apiKeyAccessListEntity,
@@ -91,7 +92,7 @@ func TestOrgAPIKeyAccessList(t *testing.T) {
 
 func deleteAccessListEntry(t *testing.T, cliPath, entry, apiKeyID string) {
 	t.Helper()
-	cmd := exec.Command(cliPath,
+	cmd := exec.CommandContext(context.Background(), cliPath,
 		iamEntity,
 		orgEntity,
 		apiKeysEntity,

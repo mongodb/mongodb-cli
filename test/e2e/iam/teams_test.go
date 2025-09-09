@@ -17,6 +17,7 @@
 package iam_test
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -43,7 +44,7 @@ func TestTeams(t *testing.T) {
 		username, _, err := OrgNUser(0)
 		require.NoError(t, err)
 
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			iamEntity,
 			teamsEntity,
 			"create",
@@ -65,7 +66,7 @@ func TestTeams(t *testing.T) {
 	require.NotEmpty(t, teamID)
 
 	t.Run("Describe By ID", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			iamEntity,
 			teamsEntity,
 			"describe",
@@ -84,7 +85,7 @@ func TestTeams(t *testing.T) {
 	})
 
 	t.Run("Describe By Name", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			iamEntity,
 			teamsEntity,
 			"describe",
@@ -103,7 +104,7 @@ func TestTeams(t *testing.T) {
 	})
 
 	t.Run("List", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			iamEntity,
 			teamsEntity,
 			"ls",
@@ -120,7 +121,7 @@ func TestTeams(t *testing.T) {
 	})
 
 	t.Run("Delete", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			iamEntity,
 			teamsEntity,
 			"delete",

@@ -17,6 +17,7 @@
 package cloud_manager_test
 
 import (
+	"context"
 	"os"
 	"os/exec"
 	"path"
@@ -50,7 +51,7 @@ func TestKeyProviders(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			entity,
 			"logs",
 			"keyProviders",

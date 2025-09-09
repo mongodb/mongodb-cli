@@ -17,6 +17,7 @@
 package iam_test
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -49,7 +50,7 @@ func TestTeamUsers(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Run("Add", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			iamEntity,
 			teamsEntity,
 			usersEntity,
@@ -77,7 +78,7 @@ func TestTeamUsers(t *testing.T) {
 	})
 
 	t.Run("List", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			iamEntity,
 			teamsEntity,
 			usersEntity,
@@ -95,7 +96,7 @@ func TestTeamUsers(t *testing.T) {
 	})
 
 	t.Run("Delete", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			iamEntity,
 			teamsEntity,
 			usersEntity,

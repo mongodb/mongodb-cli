@@ -16,6 +16,7 @@ package kmip
 
 import (
 	"bufio"
+	"context"
 	"crypto/tls"
 	"crypto/x509"
 	"errors"
@@ -245,14 +246,25 @@ func validate(config *Config) error {
 }
 
 // sendRequest sends a request message to KMIP server.
-func (kc *Client) sendRequest(payload any, operation kmip14.Operation) (*kmip.ResponseBatchItem, *ttlv.Decoder, error) {
-	conn, err := tls.Dial("tcp", fmt.Sprintf("%s:%d", kc.ip, kc.port), &kc.tlsConfig)
+func (kc *Client) sendRequest(ctx context.Context, payload any, operation kmip14.Operation) (*kmip.ResponseBatchItem, *ttlv.Decoder, error) {
+	dialer := &tls.Dialer{
+		Config: &kc.tlsConfig,
+	}
+
+	conn, err := dialer.DialContext(ctx, "tcp", fmt.Sprintf("%s:%d", kc.ip, kc.port))
 	if err != nil {
 		return nil, nil, err
 	}
 	defer conn.Close()
 
-	if _, certErr := conn.ConnectionState().PeerCertificates[0].Verify(x509.VerifyOptions{Roots: kc.tlsConfig.RootCAs}); certErr != nil {
+	tlsConn, ok := conn.(*tls.Conn)
+	if !ok {
+		return nil, nil, fmt.Errorf("expected TLS connection, got %T", conn)
+	}
+
+	if _, certErr := tlsConn.ConnectionState().PeerCertificates[0].Verify(
+		x509.VerifyOptions{Roots: kc.tlsConfig.RootCAs},
+	); certErr != nil {
 		return nil, nil, certErr
 	}
 
@@ -269,20 +281,18 @@ func (kc *Client) sendRequest(payload any, operation kmip14.Operation) (*kmip.Re
 		return nil, nil, err
 	}
 
-	_, err = conn.Write(requestMessage)
-	if err != nil {
+	if _, err := tlsConn.Write(requestMessage); err != nil {
 		return nil, nil, err
 	}
 
-	ttlvDecoder := ttlv.NewDecoder(bufio.NewReader(conn))
+	ttlvDecoder := ttlv.NewDecoder(bufio.NewReader(tlsConn))
 	response, err := ttlvDecoder.NextTTLV()
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var decodedResponse kmip.ResponseMessage
-	err = ttlvDecoder.DecodeValue(&decodedResponse, response)
-	if err != nil {
+	if err := ttlvDecoder.DecodeValue(&decodedResponse, response); err != nil {
 		return nil, nil, err
 	}
 
@@ -299,7 +309,7 @@ func (kc *Client) GetSymmetricKey(keyID string) ([]byte, error) {
 		UniqueIdentifier: kmip20.UniqueIdentifierValue{Text: keyID},
 	}
 
-	batchItem, decoder, err := kc.sendRequest(payload, kmip14.OperationGet)
+	batchItem, decoder, err := kc.sendRequest(context.Background(), payload, kmip14.OperationGet)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %w", ErrKMIPGetOpFailure, err)
 	}
@@ -347,7 +357,7 @@ func (kc *Client) CreateSymmetricKey(length int32) (*string, error) {
 		}
 	}
 
-	batchItem, decoder, err := kc.sendRequest(payload, kmip14.OperationCreate)
+	batchItem, decoder, err := kc.sendRequest(context.Background(), payload, kmip14.OperationCreate)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %w", ErrKMIPPerformCreateSymmetricKey, err)
 	}
@@ -368,7 +378,7 @@ func (kc *Client) Encrypt(keyID string, data []byte) (*EncryptResponse, error) {
 		Data:             data,
 	}
 
-	batchItem, decoder, err := kc.sendRequest(payload, kmip14.OperationEncrypt)
+	batchItem, decoder, err := kc.sendRequest(context.Background(), payload, kmip14.OperationEncrypt)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %w", ErrKMIPPerformEncrypt, err)
 	}
@@ -390,7 +400,7 @@ func (kc *Client) Decrypt(keyID string, data, iv []byte) (*DecryptResponse, erro
 		IVCounterNonce:   iv,
 	}
 
-	batchItem, decoder, err := kc.sendRequest(payLoad, kmip14.OperationDecrypt)
+	batchItem, decoder, err := kc.sendRequest(context.Background(), payLoad, kmip14.OperationDecrypt)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %w", ErrKMIPPerformDecrypt, err)
 	}

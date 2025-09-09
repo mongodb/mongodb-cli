@@ -17,6 +17,7 @@
 package cloud_manager_test
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -49,7 +50,7 @@ func TestFeaturePolicies(t *testing.T) {
 	})
 
 	t.Run("Update", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			entity,
 			featurePolicies,
 			"update",
@@ -79,7 +80,7 @@ func TestFeaturePolicies(t *testing.T) {
 	})
 
 	t.Run("List", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			entity,
 			featurePolicies,
 			"list",

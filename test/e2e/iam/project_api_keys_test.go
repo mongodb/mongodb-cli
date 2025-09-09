@@ -17,6 +17,7 @@
 package iam_test
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -38,7 +39,7 @@ func TestProjectAPIKeys(t *testing.T) {
 	// This test must run first to grab the ID of the project to later describe
 	t.Run("Create", func(t *testing.T) {
 		const desc = "e2e-test"
-		cmd := exec.Command(cliPath, iamEntity,
+		cmd := exec.CommandContext(context.Background(), cliPath, iamEntity,
 			projectsEntity,
 			apiKeysEntity,
 			"create",
@@ -67,7 +68,7 @@ func TestProjectAPIKeys(t *testing.T) {
 	}()
 
 	t.Run("Assign", func(t *testing.T) {
-		cmd := exec.Command(cliPath, iamEntity,
+		cmd := exec.CommandContext(context.Background(), cliPath, iamEntity,
 			projectsEntity,
 			apiKeysEntity,
 			"assign",
@@ -80,7 +81,7 @@ func TestProjectAPIKeys(t *testing.T) {
 	})
 
 	t.Run("List", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			iamEntity,
 			projectsEntity,
 			apiKeysEntity,
@@ -95,7 +96,7 @@ func TestProjectAPIKeys(t *testing.T) {
 	})
 
 	t.Run("Delete", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			iamEntity,
 			projectsEntity,
 			apiKeysEntity,

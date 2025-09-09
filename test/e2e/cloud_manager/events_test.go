@@ -17,6 +17,7 @@
 package cloud_manager_test
 
 import (
+	"context"
 	"encoding/json"
 	"os"
 	"os/exec"
@@ -34,7 +35,7 @@ func TestEvents(t *testing.T) {
 	}
 
 	t.Run("List Project Event", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			entity,
 			eventsEntity,
 			projectsEntity,
@@ -55,7 +56,7 @@ func TestEvents(t *testing.T) {
 	})
 
 	t.Run("List Organization Event", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			entity,
 			eventsEntity,
 			orgsEntity,

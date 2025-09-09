@@ -17,6 +17,7 @@
 package iam_test
 
 import (
+	"context"
 	"encoding/json"
 	"os"
 	"os/exec"
@@ -36,7 +37,7 @@ func TestOrgs(t *testing.T) {
 
 	// This test must run first to grab the ID of the org to later describe
 	t.Run("List", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			iamEntity,
 			orgEntity,
 			"ls",
@@ -54,7 +55,7 @@ func TestOrgs(t *testing.T) {
 	require.NotEmpty(t, orgID)
 
 	t.Run("Describe", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			iamEntity,
 			orgEntity,
 			"describe",
@@ -66,7 +67,7 @@ func TestOrgs(t *testing.T) {
 	})
 
 	t.Run("List Org Users", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			iamEntity,
 			orgEntity,
 			usersEntity,

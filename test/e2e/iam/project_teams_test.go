@@ -17,6 +17,7 @@
 package iam_test
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -52,7 +53,7 @@ func TestProjectTeams(t *testing.T) {
 	})
 
 	t.Run("Add", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			iamEntity,
 			projectsEntity,
 			teamsEntity,
@@ -83,7 +84,7 @@ func TestProjectTeams(t *testing.T) {
 	t.Run("Update", func(t *testing.T) {
 		roleName1 := "GROUP_READ_ONLY"
 		roleName2 := "GROUP_DATA_ACCESS_READ_ONLY"
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			iamEntity,
 			projectsEntity,
 			teamsEntity,
@@ -112,7 +113,7 @@ func TestProjectTeams(t *testing.T) {
 	})
 
 	t.Run("List", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			iamEntity,
 			projectsEntity,
 			teamsEntity,
@@ -131,7 +132,7 @@ func TestProjectTeams(t *testing.T) {
 	})
 
 	t.Run("Delete", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			iamEntity,
 			projectsEntity,
 			teamsEntity,

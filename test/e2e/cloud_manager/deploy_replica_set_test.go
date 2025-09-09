@@ -17,6 +17,7 @@
 package cloud_manager_test
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -47,7 +48,7 @@ func TestDeployReplicaSet(t *testing.T) {
 	)
 
 	t.Run("Apply", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			entity,
 			clustersEntity,
 			"apply",
@@ -63,7 +64,7 @@ func TestDeployReplicaSet(t *testing.T) {
 	t.Run("Watch", watchAutomation(cliPath))
 
 	t.Run("List", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			entity,
 			clustersEntity,
 			"ls",
@@ -79,7 +80,7 @@ func TestDeployReplicaSet(t *testing.T) {
 	})
 
 	t.Run("List No Output", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			entity,
 			clustersEntity,
 			"ls",
@@ -93,7 +94,7 @@ func TestDeployReplicaSet(t *testing.T) {
 	})
 
 	t.Run("Describe", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			entity,
 			clustersEntity,
 			"describe",
@@ -112,7 +113,7 @@ func TestDeployReplicaSet(t *testing.T) {
 
 	t.Run("Update", func(t *testing.T) {
 		require.NoError(t, generateRSConfigUpdate(testFile))
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			entity,
 			clustersEntity,
 			"update",
@@ -129,7 +130,7 @@ func TestDeployReplicaSet(t *testing.T) {
 	t.Run("Watch", watchAutomation(cliPath))
 
 	t.Run("Reclaim free space", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			entity,
 			clustersEntity,
 			"reclaimFreeSpace",
@@ -145,7 +146,7 @@ func TestDeployReplicaSet(t *testing.T) {
 	t.Run("Watch", watchAutomation(cliPath))
 
 	t.Run("Restart", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			entity,
 			clustersEntity,
 			"restart",
@@ -161,7 +162,7 @@ func TestDeployReplicaSet(t *testing.T) {
 	t.Run("Watch", watchAutomation(cliPath))
 
 	t.Run("Shutdown", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			entity,
 			clustersEntity,
 			"shutdown",
@@ -177,7 +178,7 @@ func TestDeployReplicaSet(t *testing.T) {
 	t.Run("Watch", watchAutomation(cliPath))
 
 	t.Run("Unmanage", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			entity,
 			clustersEntity,
 			"unmanage",
@@ -196,7 +197,7 @@ func TestDeployReplicaSet(t *testing.T) {
 		ids, err := hostIDs(cliPath)
 		require.NoError(t, err)
 		for _, h := range ids {
-			cmd := exec.Command(cliPath,
+			cmd := exec.CommandContext(context.Background(), cliPath,
 				entity,
 				monitoringEntity,
 				"rm",
@@ -227,7 +228,7 @@ func TestDeployAndDeleteReplicaSet(t *testing.T) {
 		generateRSConfig(testFile, hostname, clusterName, testedMDBVersion, testedMDBFCV),
 	)
 	t.Run("Apply", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			entity,
 			clustersEntity,
 			"apply",
@@ -243,7 +244,7 @@ func TestDeployAndDeleteReplicaSet(t *testing.T) {
 	t.Run("Watch", watchAutomation(cliPath))
 
 	t.Run("Delete Cluster", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			entity,
 			clustersEntity,
 			"delete",

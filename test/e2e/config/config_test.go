@@ -17,6 +17,7 @@
 package config_test
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"os"
@@ -62,7 +63,7 @@ func TestConfig(t *testing.T) {
 		}
 		defer c.Close()
 
-		cmd := exec.Command(cliPath, configEntity, "-P", "e2e-expect")
+		cmd := exec.CommandContext(context.Background(), cliPath, configEntity, "-P", "e2e-expect")
 		cmd.Stdin = c.Tty()
 		cmd.Stdout = c.Tty()
 		cmd.Stderr = c.Tty()
@@ -121,7 +122,7 @@ func TestConfig(t *testing.T) {
 	})
 
 	t.Run("List", func(t *testing.T) {
-		cmd := exec.Command(cliPath, configEntity, "ls")
+		cmd := exec.CommandContext(context.Background(), cliPath, configEntity, "ls")
 		cmd.Env = os.Environ()
 		resp, err := cmd.CombinedOutput()
 		if err != nil {
@@ -133,7 +134,8 @@ func TestConfig(t *testing.T) {
 	})
 	t.Run("Describe", func(t *testing.T) {
 		// This depends on a ORG_ID ENV
-		cmd := exec.Command(
+		cmd := exec.CommandContext(
+			context.Background(),
 			cliPath,
 			configEntity,
 			"describe",
@@ -157,7 +159,8 @@ func TestConfig(t *testing.T) {
 		}
 	})
 	t.Run("Rename", func(t *testing.T) {
-		cmd := exec.Command(
+		cmd := exec.CommandContext(
+			context.Background(),
 			cliPath,
 			configEntity,
 			"rename",
@@ -175,7 +178,7 @@ func TestConfig(t *testing.T) {
 		}
 	})
 	t.Run("Delete", func(t *testing.T) {
-		cmd := exec.Command(cliPath, configEntity, "delete", "renamed", "--force")
+		cmd := exec.CommandContext(context.Background(), cliPath, configEntity, "delete", "renamed", "--force")
 		cmd.Env = os.Environ()
 		resp, err := cmd.CombinedOutput()
 

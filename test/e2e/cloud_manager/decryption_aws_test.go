@@ -17,6 +17,7 @@
 package cloud_manager_test
 
 import (
+	"context"
 	"embed"
 	"os"
 	"os/exec"
@@ -46,7 +47,7 @@ func TestDecryptWithAWS(t *testing.T) {
 	expectedContents, err := filesAWS.ReadFile(decryption.GenerateFileName(awsTestsInputDir, "output"))
 	req.NoError(err)
 
-	cmd := exec.Command(cliPath,
+	cmd := exec.CommandContext(context.Background(), cliPath,
 		entity,
 		"logs",
 		"decrypt",

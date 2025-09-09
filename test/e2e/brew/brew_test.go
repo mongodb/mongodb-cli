@@ -16,6 +16,7 @@
 package brew_test
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"os/exec"
@@ -39,7 +40,7 @@ func TestMongoCLIConfig(t *testing.T) {
 	tempDirEnv := fmt.Sprintf("XDG_CONFIG_HOME=%s", os.TempDir()) // make sure no config.toml is detected
 
 	t.Run("config ls", func(t *testing.T) {
-		cmd := exec.Command(cliPath, "config", "ls")
+		cmd := exec.CommandContext(context.Background(), cliPath, "config", "ls")
 		cmd.Env = append(os.Environ(), tempDirEnv)
 		resp, err := cmd.CombinedOutput()
 		if err != nil {
@@ -54,7 +55,7 @@ func TestMongoCLIConfig(t *testing.T) {
 	})
 
 	t.Run("iam projects ls", func(t *testing.T) {
-		cmd := exec.Command(cliPath, "iam", "projects", "ls")
+		cmd := exec.CommandContext(context.Background(), cliPath, "iam", "projects", "ls")
 		cmd.Env = append(os.Environ(), tempDirEnv)
 		resp, err := cmd.CombinedOutput()
 		if err == nil {
@@ -68,7 +69,7 @@ func TestMongoCLIConfig(t *testing.T) {
 	})
 
 	t.Run("help", func(t *testing.T) {
-		cmd := exec.Command(cliPath, "help")
+		cmd := exec.CommandContext(context.Background(), cliPath, "help")
 		cmd.Env = append(os.Environ(), tempDirEnv)
 		if resp, err := cmd.CombinedOutput(); err != nil {
 			t.Fatalf("unexpected error, resp: %v", string(resp))

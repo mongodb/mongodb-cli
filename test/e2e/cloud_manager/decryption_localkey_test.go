@@ -17,6 +17,7 @@
 package cloud_manager_test
 
 import (
+	"context"
 	"embed"
 	"fmt"
 	"io/fs"
@@ -62,7 +63,7 @@ func TestDecrypt(t *testing.T) {
 			expectedContents, err := files.ReadFile(decryption.GenerateFileNameCase(localKeyTestsInputDir, i, "output"))
 			req.NoError(err)
 
-			cmd := exec.Command(cliPath,
+			cmd := exec.CommandContext(context.Background(), cliPath,
 				entity,
 				"logs",
 				"decrypt",

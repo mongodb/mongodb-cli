@@ -16,6 +16,7 @@
 package iam_test
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -52,7 +53,7 @@ func createOrgAPIKey() (string, error) {
 		return "", err
 	}
 
-	cmd := exec.Command(cliPath, iamEntity,
+	cmd := exec.CommandContext(context.Background(), cliPath, iamEntity,
 		orgEntity,
 		apiKeysEntity,
 		"create",
@@ -83,7 +84,8 @@ func deleteOrgAPIKey(id string) error {
 	if err != nil {
 		return err
 	}
-	cmd := exec.Command(cliPath,
+	cmd := exec.CommandContext(context.Background(),
+		cliPath,
 		iamEntity,
 		orgEntity,
 		apiKeysEntity,
@@ -104,7 +106,8 @@ func createTeam(teamName string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	cmd := exec.Command(cliPath,
+	cmd := exec.CommandContext(context.Background(),
+		cliPath,
 		iamEntity,
 		teamsEntity,
 		"create",
@@ -131,7 +134,8 @@ func deleteTeam(teamID string) error {
 	if err != nil {
 		return err
 	}
-	cmd := exec.Command(cliPath,
+	cmd := exec.CommandContext(context.Background(),
+		cliPath,
 		iamEntity,
 		teamsEntity,
 		"delete",
@@ -151,7 +155,8 @@ func OrgNUser(n int) (username, userID string, err error) {
 	if err != nil {
 		return "", "", err
 	}
-	cmd := exec.Command(cliPath,
+	cmd := exec.CommandContext(context.Background(),
+		cliPath,
 		iamEntity,
 		orgEntity,
 		usersEntity,
