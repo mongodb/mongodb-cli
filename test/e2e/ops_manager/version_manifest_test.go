@@ -17,6 +17,7 @@
 package ops_manager_test
 
 import (
+	"context"
 	"encoding/json"
 	"os"
 	"os/exec"
@@ -32,7 +33,8 @@ func TestVersionManifest(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	cmd := exec.Command(cliPath,
+	cmd := exec.CommandContext(context.Background(),
+		cliPath,
 		"om",
 		"versionManifest",
 		"update",

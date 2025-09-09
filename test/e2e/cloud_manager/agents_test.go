@@ -17,6 +17,7 @@
 package cloud_manager_test
 
 import (
+	"context"
 	"encoding/json"
 	"os"
 	"os/exec"
@@ -34,7 +35,8 @@ func TestAgents(t *testing.T) {
 
 	var hostname string
 	t.Run("List", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(),
+			cliPath,
 			entity,
 			agentsEntity,
 			"list",
@@ -54,7 +56,8 @@ func TestAgents(t *testing.T) {
 	})
 
 	t.Run("Version List", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(),
+			cliPath,
 			entity,
 			agentsEntity,
 			"version",
@@ -73,7 +76,8 @@ func TestAgents(t *testing.T) {
 	})
 
 	t.Run("Enable backup", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(),
+			cliPath,
 			entity,
 			backupEntity,
 			"enable",
@@ -84,7 +88,8 @@ func TestAgents(t *testing.T) {
 		require.NoError(t, err, string(resp))
 	})
 	t.Run("Disable backup", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(),
+			cliPath,
 			entity,
 			backupEntity,
 			"disable",
@@ -96,7 +101,8 @@ func TestAgents(t *testing.T) {
 	})
 
 	t.Run("Enable monitoring", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(),
+			cliPath,
 			entity,
 			monitoringEntity,
 			"enable",
@@ -107,7 +113,8 @@ func TestAgents(t *testing.T) {
 		require.NoError(t, err, string(resp))
 	})
 	t.Run("Disable monitoring", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(),
+			cliPath,
 			entity,
 			monitoringEntity,
 			"disable",

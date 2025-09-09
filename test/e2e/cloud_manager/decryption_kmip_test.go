@@ -17,6 +17,7 @@
 package cloud_manager_test
 
 import (
+	"context"
 	"embed"
 	"encoding/base64"
 	"fmt"
@@ -78,7 +79,7 @@ func TestDecryptWithKMIP(t *testing.T) {
 			expectedContents, err2 := filesKmip.ReadFile(decryption.GenerateFileNameCase(kmipTestsInputDir, i, "output"))
 			req.NoError(err2, string(expectedContents))
 
-			cmd := exec.Command(cliPath,
+			cmd := exec.CommandContext(context.Background(), cliPath,
 				entity,
 				"logs",
 				"decrypt",

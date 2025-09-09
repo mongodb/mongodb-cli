@@ -15,6 +15,7 @@
 package config
 
 import (
+	"context"
 	"os"
 	"os/exec"
 
@@ -33,7 +34,7 @@ func (*editOpts) Run() error {
 	} else if e := os.Getenv("EDITOR"); e != "" {
 		editor = e
 	}
-	cmd := exec.Command(editor, config.Filename()) //nolint:gosec // it's ok to let users do this
+	cmd := exec.CommandContext(context.Background(), editor, config.Filename()) //nolint:gosec // it's ok to let users do this
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

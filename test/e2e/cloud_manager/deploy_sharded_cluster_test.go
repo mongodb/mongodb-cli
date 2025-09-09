@@ -17,6 +17,7 @@
 package cloud_manager_test
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"os/exec"
@@ -44,7 +45,7 @@ func TestDeployCluster(t *testing.T) {
 	)
 
 	t.Run("Apply", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			entity,
 			clustersEntity,
 			"apply",
@@ -60,7 +61,7 @@ func TestDeployCluster(t *testing.T) {
 	t.Run("Watch", watchAutomation(cliPath))
 
 	t.Run("Restart", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			entity,
 			clustersEntity,
 			"restart",
@@ -76,7 +77,7 @@ func TestDeployCluster(t *testing.T) {
 	t.Run("Watch", watchAutomation(cliPath))
 
 	t.Run("Reclaim free space", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			entity,
 			clustersEntity,
 			"reclaimFreeSpace",
@@ -92,7 +93,7 @@ func TestDeployCluster(t *testing.T) {
 	t.Run("Watch", watchAutomation(cliPath))
 
 	t.Run("Shutdown", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			entity,
 			clustersEntity,
 			"shutdown",
@@ -108,7 +109,7 @@ func TestDeployCluster(t *testing.T) {
 	t.Run("Watch", watchAutomation(cliPath))
 
 	t.Run("Un-manage", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			entity,
 			clustersEntity,
 			"unmanage",
@@ -127,7 +128,7 @@ func TestDeployCluster(t *testing.T) {
 		ids, err := hostIDs(cliPath)
 		require.NoError(t, err)
 		for _, h := range ids {
-			cmd := exec.Command(cliPath,
+			cmd := exec.CommandContext(context.Background(), cliPath,
 				entity,
 				monitoringEntity,
 				"rm",
@@ -161,7 +162,7 @@ func TestDeployDeleteCluster(t *testing.T) {
 	)
 
 	t.Run("Apply", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			entity,
 			clustersEntity,
 			"apply",
@@ -177,7 +178,7 @@ func TestDeployDeleteCluster(t *testing.T) {
 	t.Run("Watch", watchAutomation(cliPath))
 
 	t.Run("Delete Sharded Cluster", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			entity,
 			clustersEntity,
 			"delete",

@@ -17,6 +17,7 @@
 package cloud_manager_test
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -49,7 +50,7 @@ func TestMaintenanceWindows(t *testing.T) {
 	var maintenanceWindowID string
 
 	t.Run("create", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			entity,
 			maintenanceEntity,
 			"create",
@@ -77,7 +78,7 @@ func TestMaintenanceWindows(t *testing.T) {
 	})
 
 	t.Run("describe", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			entity,
 			maintenanceEntity,
 			"describe",
@@ -96,7 +97,7 @@ func TestMaintenanceWindows(t *testing.T) {
 	})
 
 	t.Run("list", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			entity,
 			maintenanceEntity,
 			"ls",
@@ -116,7 +117,7 @@ func TestMaintenanceWindows(t *testing.T) {
 	})
 
 	t.Run("update", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			entity,
 			maintenanceEntity,
 			"update",
@@ -139,7 +140,7 @@ func TestMaintenanceWindows(t *testing.T) {
 	})
 
 	t.Run("delete", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			entity,
 			maintenanceEntity,
 			"delete",

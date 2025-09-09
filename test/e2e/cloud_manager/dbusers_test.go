@@ -18,6 +18,7 @@ package cloud_manager_test
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -48,7 +49,7 @@ func TestDBUsersWithFlags(t *testing.T) {
 	t.Run("Watch", watchAutomation(cliPath))
 
 	t.Run("Create", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			entity,
 			dbUsersEntity,
 			"create",
@@ -62,7 +63,7 @@ func TestDBUsersWithFlags(t *testing.T) {
 	})
 
 	t.Run("List", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			entity,
 			dbUsersEntity,
 			"ls",
@@ -100,7 +101,7 @@ func TestDBUsersWithStdin(t *testing.T) {
 	t.Run("Watch", watchAutomation(cliPath))
 
 	t.Run("CreatePassword", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			entity,
 			dbUsersEntity,
 			"create",
@@ -131,7 +132,7 @@ func generateUsername() (string, error) {
 func testEnableSecurity(t *testing.T, cliPath string) {
 	t.Helper()
 
-	cmd := exec.Command(cliPath,
+	cmd := exec.CommandContext(context.Background(), cliPath,
 		entity,
 		securityEntity,
 		"enable",
@@ -152,7 +153,7 @@ func testEnableSecurity(t *testing.T, cliPath string) {
 func testDelete(t *testing.T, cliPath, username string) {
 	t.Helper()
 
-	cmd := exec.Command(cliPath,
+	cmd := exec.CommandContext(context.Background(), cliPath,
 		entity,
 		dbUsersEntity,
 		"delete",

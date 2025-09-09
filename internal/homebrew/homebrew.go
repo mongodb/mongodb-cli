@@ -16,6 +16,7 @@ package homebrew
 
 import (
 	"bytes"
+	"context"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -53,7 +54,7 @@ func (s *Checker) IsHomebrew() bool {
 	}
 
 	cmdResult := new(bytes.Buffer)
-	cmd := exec.Command("brew", "--prefix", "mongocli")
+	cmd := exec.CommandContext(context.Background(), "brew", "--prefix", "mongocli")
 
 	if err = cmd.Start(); err != nil {
 		return false

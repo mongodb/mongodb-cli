@@ -17,6 +17,7 @@
 package cloud_manager_test
 
 import (
+	"context"
 	"encoding/json"
 	"os"
 	"os/exec"
@@ -39,7 +40,8 @@ func TestAgentAPIKeys(t *testing.T) {
 	}
 
 	t.Run("List", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(),
+			cliPath,
 			entity,
 			agentsEntity,
 			apiKeys,

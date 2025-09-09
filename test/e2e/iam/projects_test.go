@@ -17,6 +17,7 @@
 package iam_test
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -43,7 +44,7 @@ func TestProjects(t *testing.T) {
 	var projectID string
 	t.Run("Create", func(t *testing.T) {
 		// This depends on a ORG_ID ENV
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			iamEntity,
 			projectsEntity,
 			"create",
@@ -66,7 +67,7 @@ func TestProjects(t *testing.T) {
 	})
 
 	t.Run("List", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			iamEntity,
 			projectsEntity,
 			"ls",
@@ -78,7 +79,7 @@ func TestProjects(t *testing.T) {
 	})
 
 	t.Run("Describe", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			iamEntity,
 			projectsEntity,
 			"describe",
@@ -91,7 +92,7 @@ func TestProjects(t *testing.T) {
 	})
 
 	t.Run("Users", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			iamEntity,
 			projectsEntity,
 			usersEntity,
@@ -105,7 +106,7 @@ func TestProjects(t *testing.T) {
 	})
 
 	t.Run("Delete", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			iamEntity,
 			projectsEntity,
 			"delete",

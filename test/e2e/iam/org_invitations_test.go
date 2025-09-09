@@ -16,6 +16,7 @@
 package iam_test
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -41,7 +42,7 @@ func TestOrgInvitations(t *testing.T) {
 	var orgInvitationID string
 
 	t.Run("Invite", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			iamEntity,
 			orgEntity,
 			invitationsEntity,
@@ -63,7 +64,8 @@ func TestOrgInvitations(t *testing.T) {
 	})
 
 	t.Run("List", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(),
+			cliPath,
 			iamEntity,
 			orgEntity,
 			invitationsEntity,
@@ -81,7 +83,7 @@ func TestOrgInvitations(t *testing.T) {
 	})
 
 	t.Run("Describe", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			iamEntity,
 			orgEntity,
 			invitationsEntity,
@@ -100,7 +102,7 @@ func TestOrgInvitations(t *testing.T) {
 	})
 
 	t.Run("Update by email", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			iamEntity,
 			orgEntity,
 			invitationsEntity,
@@ -123,7 +125,7 @@ func TestOrgInvitations(t *testing.T) {
 	})
 
 	t.Run("Update by ID", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			iamEntity,
 			orgEntity,
 			invitationsEntity,
@@ -144,7 +146,7 @@ func TestOrgInvitations(t *testing.T) {
 	})
 
 	t.Run("Delete", func(t *testing.T) {
-		cmd := exec.Command(cliPath,
+		cmd := exec.CommandContext(context.Background(), cliPath,
 			iamEntity,
 			orgEntity,
 			invitationsEntity,
