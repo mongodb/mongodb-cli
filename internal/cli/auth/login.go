@@ -280,12 +280,13 @@ func LoginBuilder() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "login",
-		Short: "Authenticate with MongoDB Atlas.",
+		Short: "Authenticate with MongoDB Cloud Manager.",
 		Example: `  # Log in to your MongoDB Cloud Manager account in interactive mode:
   mongocli auth login
 `,
 		PreRunE: func(cmd *cobra.Command, _ []string) error {
 			opts.OutWriter = cmd.OutOrStdout()
+			opts.Service = config.Service()
 			defaultProfile := config.Default()
 			return prerun.ExecuteE(
 				opts.SyncWithOAuthAccessProfile(defaultProfile),
