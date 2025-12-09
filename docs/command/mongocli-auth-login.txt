@@ -12,7 +12,7 @@ mongocli auth login
    :depth: 1
    :class: singlecol
 
-Authenticate with MongoDB Atlas.
+Authenticate with MongoDB Cloud Manager.
 
 Syntax
 ------
