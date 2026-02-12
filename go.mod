@@ -28,7 +28,7 @@ require (
 	github.com/spf13/viper v1.21.0
 	github.com/stretchr/testify v1.11.1
 	go.mongodb.org/atlas v0.38.0
-	go.mongodb.org/mongo-driver v1.17.7
+	go.mongodb.org/mongo-driver v1.17.9
 	go.mongodb.org/ops-manager v0.63.0
 	golang.org/x/crypto v0.48.0
 	golang.org/x/mod v0.33.0
