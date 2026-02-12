@@ -18,11 +18,11 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/gobuffalo/flect"
 	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/config"
 	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/prerun"
 	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/validate"
 	"github.com/spf13/cobra"
-	"github.com/tangzero/inflector"
 )
 
 type AutoFunc func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective)
@@ -84,15 +84,15 @@ func GenerateAliases(use string, extra ...string) []string {
 	if lower := strings.ToLower(use); lower != use {
 		aliases = append(aliases, lower)
 	}
-	if dash := inflector.Dasherize(use); dash != use {
+	if dash := flect.Dasherize(use); dash != use {
 		aliases = append(aliases, dash)
 	}
-	if singular := inflector.Singularize(use); singular != use {
+	if singular := flect.Singularize(use); singular != use {
 		aliases = append(aliases, singular)
 		if lower := strings.ToLower(singular); lower != singular {
 			aliases = append(aliases, lower)
 		}
-		if dash := inflector.Dasherize(singular); dash != singular {
+		if dash := flect.Dasherize(singular); dash != singular {
 			aliases = append(aliases, dash)
 		}
 	}

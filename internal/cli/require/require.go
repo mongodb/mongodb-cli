@@ -17,9 +17,9 @@ package require
 import (
 	"fmt"
 
+	"github.com/gobuffalo/flect"
 	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/validate"
 	"github.com/spf13/cobra"
-	"github.com/tangzero/inflector"
 )
 
 // NoArgs returns an error if any args are included.
@@ -132,5 +132,5 @@ func pluralize(word string, n int) string {
 	if n == 1 {
 		return word
 	}
-	return inflector.Pluralize(word)
+	return flect.Pluralize(word)
 }

@@ -178,3 +178,112 @@ func Test_shouldRetryAuthenticate(t *testing.T) {
 		})
 	}
 }
+
+func Test_normalizeServiceForLogin(t *testing.T) {
+	tests := []struct {
+		name    string
+		service string
+		want    string
+	}{
+		{
+			name:    "empty service defaults to cloud-manager",
+			service: "",
+			want:    config.CloudManagerService,
+		},
+		{
+			name:    "legacy cloud alias normalizes to cloud-manager",
+			service: "cloud",
+			want:    config.CloudManagerService,
+		},
+		{
+			name:    "cloudmanager alias normalizes to cloud-manager",
+			service: "cloudmanager",
+			want:    config.CloudManagerService,
+		},
+		{
+			name:    "cm alias normalizes to cloud-manager",
+			service: "cm",
+			want:    config.CloudManagerService,
+		},
+		{
+			name:    "cloud-manager passes through unchanged",
+			service: config.CloudManagerService,
+			want:    config.CloudManagerService,
+		},
+		{
+			name:    "ops-manager passes through unchanged",
+			service: config.OpsManagerService,
+			want:    config.OpsManagerService,
+		},
+		{
+			name:    "unknown service passes through unchanged",
+			service: "unknown-service",
+			want:    "unknown-service",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := normalizeServiceForLogin(tt.service)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func Test_loginOpts_SyncWithOAuthAccessProfile(t *testing.T) {
+	tests := []struct {
+		name        string
+		service     string
+		wantErr     bool
+		errContains string
+	}{
+		{
+			name:    "empty service normalizes to cloud-manager and succeeds",
+			service: "",
+			wantErr: false,
+		},
+		{
+			name:    "cloud alias normalizes to cloud-manager and succeeds",
+			service: "cloud",
+			wantErr: false,
+		},
+		{
+			name:    "cloud-manager service succeeds",
+			service: config.CloudManagerService,
+			wantErr: false,
+		},
+		{
+			name:        "ops-manager service is rejected",
+			service:     config.OpsManagerService,
+			wantErr:     true,
+			errContains: "this command is only supported for cloud-manager",
+		},
+		{
+			name:        "unknown service is rejected",
+			service:     "unknown-service",
+			wantErr:     true,
+			errContains: "this command is only supported for cloud-manager",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			mockConfig := mocks.NewMockLoginConfig(ctrl)
+
+			if !tt.wantErr {
+				mockConfig.EXPECT().Set(gomock.Any(), gomock.Any()).AnyTimes()
+			}
+
+			opts := &LoginOpts{}
+			opts.Service = tt.service
+
+			err := opts.SyncWithOAuthAccessProfile(mockConfig)()
+			if tt.wantErr {
+				require.Error(t, err)
+				assert.Contains(t, err.Error(), tt.errContains)
+			} else {
+				require.NoError(t, err)
+				assert.Equal(t, config.CloudManagerService, opts.Service)
+			}
+		})
+	}
+}

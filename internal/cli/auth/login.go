@@ -55,11 +55,28 @@ type LoginOpts struct {
 	config       LoginConfig
 }
 
+// normalizeServiceForLogin normalizes service values for the auth login command.
+// It handles empty/unset services (defaults to cloud-manager) and legacy aliases.
+func normalizeServiceForLogin(service string) string {
+	switch service {
+	case "", "cloud", "cloudmanager", "cm":
+		// Default to cloud-manager for empty/unset service (fresh install case)
+		// Recognize legacy "cloud" alias for backward compatibility
+		// Apply same normalization as config command
+		return config.CloudManagerService
+	default:
+		return service
+	}
+}
+
 // SyncWithOAuthAccessProfile returns a function that is synchronizing the oauth settings
 // from a login config profile with the provided command opts.
 func (opts *LoginOpts) SyncWithOAuthAccessProfile(c LoginConfig) func() error {
 	return func() error {
 		opts.config = c
+
+		// Normalize service value to handle fresh installs and legacy aliases
+		opts.Service = normalizeServiceForLogin(opts.Service)
 
 		if opts.Service != config.CloudManagerService {
 			return fmt.Errorf("this command is only supported for cloud-manager, not %q", opts.Service)
