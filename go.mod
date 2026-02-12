@@ -12,6 +12,7 @@ require (
 	github.com/evergreen-ci/shrub v0.0.0-20250722131402-d928029ce3a4
 	github.com/gemalto/kmip-go v0.1.0
 	github.com/go-test/deep v1.1.1
+	github.com/gobuffalo/flect v1.0.3
 	github.com/golang-jwt/jwt/v4 v4.5.2
 	github.com/golang/mock v1.6.0
 	github.com/google/go-github/v61 v61.0.0
@@ -26,7 +27,6 @@ require (
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/viper v1.21.0
 	github.com/stretchr/testify v1.11.1
-	github.com/tangzero/inflector v1.0.0
 	go.mongodb.org/atlas v0.38.0
 	go.mongodb.org/mongo-driver v1.17.7
 	go.mongodb.org/ops-manager v0.63.0
