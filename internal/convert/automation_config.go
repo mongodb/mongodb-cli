@@ -43,6 +43,8 @@ func FromAutomationConfig(c *opsmngr.AutomationConfig) []*ClusterConfig {
 	}
 	for _, rs := range c.ReplicaSets {
 		newRS := newReplicaSetCluster(rs.ID, len(rs.Members))
+		newRS.Settings = rs.Settings
+		newRS.WriteConcernMajorityJournalDefault = rs.WriteConcernMajorityJournalDefault
 		for j, m := range rs.Members {
 			for k := len(c.Processes) - 1; k >= 0; k-- {
 				p := c.Processes[k]

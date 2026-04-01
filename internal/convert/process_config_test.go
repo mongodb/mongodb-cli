@@ -535,3 +535,35 @@ func Test_memberFieldsRoundtrip(t *testing.T) {
 	assert.Equal(t, horizons, m.Horizons)
 	assert.Equal(t, tags, m.Tags)
 }
+
+func Test_processFieldsRoundtrip(t *testing.T) {
+	cpuAffinity := []int{0, 1, 2, 3}
+	omp := &opsmngr.Process{
+		Args26: opsmngr.Args26{
+			NET:         opsmngr.Net{Port: 27017},
+			Storage:     &opsmngr.Storage{DBPath: "/data"},
+			SystemLog:   opsmngr.SystemLog{Destination: "file", Path: "/log"},
+			Replication: &opsmngr.Replication{ReplSetName: "myRS"},
+		},
+		CPUAffinity:                 cpuAffinity,
+		FeatureCompatibilityVersion: "4.4",
+		Hostname:                    "host0",
+		Name:                        "myRS_1",
+		ProcessType:                 "mongod",
+		Version:                     "4.4.1",
+	}
+	omm := &opsmngr.Member{
+		BuildIndexes: true,
+		Host:         "myRS_1",
+		Priority:     1,
+		Votes:        1,
+	}
+
+	// Describe direction
+	pc := newReplicaSetProcessConfig(omm, omp)
+	assert.Equal(t, cpuAffinity, pc.CPUAffinity)
+
+	// Update direction
+	proc := pc.process()
+	assert.Equal(t, cpuAffinity, proc.CPUAffinity)
+}

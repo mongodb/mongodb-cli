@@ -22,6 +22,7 @@ import (
 	"github.com/go-test/deep"
 	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/pointer"
 	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/test/fixture"
+	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/ops-manager/opsmngr"
 )
 
@@ -154,6 +155,9 @@ func TestClusterConfig_PatchAutomationConfig(t *testing.T) {
 						Args26: opsmngr.Args26{
 							NET: opsmngr.Net{
 								Port: 27017,
+								Compression: &map[string]any{
+									"compressors": []any{"snappy"},
+								},
 								TLS: &opsmngr.TLS{
 									CAFile:                     "CAFile",
 									CertificateKeyFile:         "CertificateKeyFile",
@@ -261,8 +265,15 @@ func TestClusterConfig_PatchAutomationConfig(t *testing.T) {
 								Votes:              1,
 								SlaveDelay:         pointer.Get[float64](1),
 								SecondaryDelaySecs: pointer.Get[float64](1),
+								Tags: &map[string]string{
+									"region": "us-east-1",
+								},
 							},
 						},
+						Settings: &map[string]any{
+							"chainingAllowed": true,
+						},
+						WriteConcernMajorityJournalDefault: "true",
 					},
 					// New
 					{
@@ -324,6 +335,9 @@ func TestClusterConfig_PatchAutomationConfig(t *testing.T) {
 						Args26: opsmngr.Args26{
 							NET: opsmngr.Net{
 								Port: 27017,
+								Compression: &map[string]any{
+									"compressors": []any{"snappy"},
+								},
 							},
 							Replication: &opsmngr.Replication{
 								ReplSetName: "replica_set_1",
@@ -441,6 +455,9 @@ func TestClusterConfig_PatchAutomationConfig(t *testing.T) {
 						Args26: opsmngr.Args26{
 							NET: opsmngr.Net{
 								Port: 27017,
+								Compression: &map[string]any{
+									"compressors": []any{"snappy"},
+								},
 								TLS: &opsmngr.TLS{
 									CAFile:                     "CAFile",
 									CertificateKeyFile:         "CertificateKeyFile",
@@ -571,6 +588,9 @@ func TestClusterConfig_PatchAutomationConfig(t *testing.T) {
 						Args26: opsmngr.Args26{
 							NET: opsmngr.Net{
 								Port: 27017,
+								Compression: &map[string]any{
+									"compressors": []any{"snappy"},
+								},
 								TLS: &opsmngr.TLS{
 									CAFile:                     "CAFile",
 									CertificateKeyFile:         "CertificateKeyFile",
@@ -1111,4 +1131,38 @@ func TestClusterConfig_PatchAutomationConfig(t *testing.T) {
 			}
 		})
 	}
+}
+
+func Test_keepSettings_preservesNetFields(t *testing.T) {
+	t.Parallel()
+	compression := &map[string]any{"compressors": []any{"snappy"}}
+	maxConn := pointer.Get(500)
+
+	oldProcess := &opsmngr.Process{
+		Args26: opsmngr.Args26{
+			NET: opsmngr.Net{
+				Port:                   27017,
+				Compression:            compression,
+				MaxIncomingConnections: maxConn,
+				ServiceExecutor:        "adaptive",
+			},
+		},
+	}
+
+	// New process has no Net fields set (simulates hand-written config)
+	newProcesses := []*opsmngr.Process{
+		{
+			Args26: opsmngr.Args26{
+				NET: opsmngr.Net{
+					Port: 27017,
+				},
+			},
+		},
+	}
+
+	keepSettings(oldProcess, newProcesses, 0)
+
+	assert.Equal(t, compression, newProcesses[0].Args26.NET.Compression)
+	assert.Equal(t, maxConn, newProcesses[0].Args26.NET.MaxIncomingConnections)
+	assert.Equal(t, "adaptive", newProcesses[0].Args26.NET.ServiceExecutor)
 }

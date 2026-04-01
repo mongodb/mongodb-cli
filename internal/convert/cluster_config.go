@@ -171,17 +171,26 @@ func patchProcesses(out *opsmngr.AutomationConfig, newReplicaSetID string, newPr
 
 // keepSettings if the process exists keep settings we don't expose via the CLI config file.
 func keepSettings(oldProcess *opsmngr.Process, newProcesses []*opsmngr.Process, pos int) {
-	if oldProcess.Args26.BasisTech != nil {
+	if oldProcess.Args26.BasisTech != nil && newProcesses[pos].Args26.BasisTech == nil {
 		newProcesses[pos].Args26.BasisTech = oldProcess.Args26.BasisTech
 	}
-	if oldProcess.Args26.OperationProfiling != nil {
+	if oldProcess.Args26.OperationProfiling != nil && newProcesses[pos].Args26.OperationProfiling == nil {
 		newProcesses[pos].Args26.OperationProfiling = oldProcess.Args26.OperationProfiling
 	}
-	if oldProcess.Args26.ProcessManagement != nil {
+	if oldProcess.Args26.ProcessManagement != nil && newProcesses[pos].Args26.ProcessManagement == nil {
 		newProcesses[pos].Args26.ProcessManagement = oldProcess.Args26.ProcessManagement
 	}
-	if oldProcess.Args26.SNMP != nil {
+	if oldProcess.Args26.SNMP != nil && newProcesses[pos].Args26.SNMP == nil {
 		newProcesses[pos].Args26.SNMP = oldProcess.Args26.SNMP
+	}
+	if oldProcess.Args26.NET.Compression != nil && newProcesses[pos].Args26.NET.Compression == nil {
+		newProcesses[pos].Args26.NET.Compression = oldProcess.Args26.NET.Compression
+	}
+	if oldProcess.Args26.NET.MaxIncomingConnections != nil && newProcesses[pos].Args26.NET.MaxIncomingConnections == nil {
+		newProcesses[pos].Args26.NET.MaxIncomingConnections = oldProcess.Args26.NET.MaxIncomingConnections
+	}
+	if oldProcess.Args26.NET.ServiceExecutor != "" && newProcesses[pos].Args26.NET.ServiceExecutor == "" {
+		newProcesses[pos].Args26.NET.ServiceExecutor = oldProcess.Args26.NET.ServiceExecutor
 	}
 }
 

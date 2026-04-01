@@ -20,6 +20,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"go.mongodb.org/ops-manager/opsmngr"
 )
 
@@ -80,7 +81,7 @@ func TestRSConfig_SettingsRoundtrip(t *testing.T) {
 
 	// Update direction: RSConfig → opsmngr.ReplicaSet
 	rs, err := newReplicaSet(rsConfig)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, settings, rs.Settings)
 	assert.Equal(t, "true", rs.WriteConcernMajorityJournalDefault)
 }
