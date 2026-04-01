@@ -39,6 +39,9 @@ type ProcessConfig struct {
 	DBPath                           string            `yaml:"dbPath,omitempty" json:"dbPath,omitempty"`
 	BindIP                           *string           `yaml:"bindIp,omitempty" json:"bindIp,omitempty"`
 	BindIPAll                        *bool             `yaml:"bindIpAll,omitempty" json:"bindIpAll,omitempty"`
+	Compression                      *map[string]any   `yaml:"compression,omitempty" json:"compression,omitempty"`
+	MaxIncomingConnections           *int              `yaml:"maxIncomingConnections,omitempty" json:"maxIncomingConnections,omitempty"`
+	ServiceExecutor                  string            `yaml:"serviceExecutor,omitempty" json:"serviceExecutor,omitempty"`
 	DefaultRWConcern                 *DefaultRWConcern `yaml:"defaultRWConcern,omitempty" json:"defaultRWConcern,omitempty"` //nolint:tagliatelle // correct from API
 	DirectoryPerDB                   *bool             `yaml:"directoryPerDB,omitempty" json:"directoryPerDB,omitempty"`
 	Disabled                         bool              `yaml:"disabled" json:"disabled"`
@@ -46,6 +49,8 @@ type ProcessConfig struct {
 	EnableMajorityReadConcern        *bool             `yaml:"enableMajorityReadConcern,omitempty" json:"enableMajorityReadConcern,omitempty"`
 	FeatureCompatibilityVersion      string            `yaml:"featureCompatibilityVersion,omitempty" json:"featureCompatibilityVersion,omitempty"`
 	Hidden                           *bool             `yaml:"hidden,omitempty" json:"hidden,omitempty"`
+	Horizons                         *map[string]string `yaml:"horizons,omitempty" json:"horizons,omitempty"`
+	MemberTags                       *map[string]string `yaml:"memberTags,omitempty" json:"memberTags,omitempty"`
 	Hostname                         string            `yaml:"hostname" json:"hostname"`
 	InMemory                         *map[string]any   `yaml:"inMemory,omitempty" json:"inMemory,omitempty"`
 	IndexBuildRetry                  *bool             `yaml:"indexBuildRetry,omitempty" json:"indexBuildRetry,omitempty"`
@@ -159,6 +164,8 @@ func newProcessConfig(rs *opsmngr.Member, p *opsmngr.Process) *ProcessConfig {
 		Votes:                            &rs.Votes,
 		ArbiterOnly:                      &rs.ArbiterOnly,
 		Hidden:                           &rs.Hidden,
+		Horizons:                         rs.Horizons,
+		MemberTags:                       rs.Tags,
 		LogPath:                          p.Args26.SystemLog.Path,
 		LogDestination:                   p.Args26.SystemLog.Destination,
 		LogAppend:                        p.Args26.SystemLog.LogAppend,
@@ -170,6 +177,9 @@ func newProcessConfig(rs *opsmngr.Member, p *opsmngr.Process) *ProcessConfig {
 		Port:                             p.Args26.NET.Port,
 		BindIP:                           p.Args26.NET.BindIP,
 		BindIPAll:                        p.Args26.NET.BindIPAll,
+		Compression:                      p.Args26.NET.Compression,
+		MaxIncomingConnections:           p.Args26.NET.MaxIncomingConnections,
+		ServiceExecutor:                  p.Args26.NET.ServiceExecutor,
 		IPV6:                             p.Args26.NET.IPV6,
 		ProcessType:                      p.ProcessType,
 		Version:                          p.Version,
@@ -380,9 +390,12 @@ func newConfigRSProcess(p *ProcessConfig, rsSetName string) *opsmngr.Process {
 // net maps convert.ProcessConfig -> opsmngr.Net.
 func (p *ProcessConfig) net() opsmngr.Net {
 	net := opsmngr.Net{
-		Port:      p.Port,
-		BindIP:    p.BindIP,
-		BindIPAll: p.BindIPAll,
+		Port:                   p.Port,
+		BindIP:                 p.BindIP,
+		BindIPAll:              p.BindIPAll,
+		Compression:            p.Compression,
+		MaxIncomingConnections: p.MaxIncomingConnections,
+		ServiceExecutor:        p.ServiceExecutor,
 	}
 
 	if p.TLS != nil {
@@ -510,6 +523,8 @@ func (p *ProcessConfig) member(i int) opsmngr.Member {
 		Host:         p.Name,
 		Priority:     1,
 		Votes:        1,
+		Horizons:     p.Horizons,
+		Tags:         p.MemberTags,
 	}
 	if p.ArbiterOnly != nil {
 		m.ArbiterOnly = *p.ArbiterOnly
