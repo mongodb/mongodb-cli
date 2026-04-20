@@ -202,25 +202,31 @@ func mergeKeepNilable(dst, src reflect.Value) {
 	}
 	for i := 0; i < dst.NumField(); i++ {
 		df, sf := dst.Field(i), src.Field(i)
-		if !df.CanSet() {
-			continue
-		}
-		switch df.Kind() { //nolint:exhaustive // primitive and non-nil-able kinds are intentionally skipped; zero-value is ambiguous with "user cleared this"
-		case reflect.Ptr:
-			switch {
-			case df.IsNil() && !sf.IsNil():
-				df.Set(sf)
-			case !df.IsNil() && !sf.IsNil() && df.Elem().Kind() == reflect.Struct:
-				mergeKeepNilable(df.Elem(), sf.Elem())
-			}
-		case reflect.Map, reflect.Slice, reflect.Interface:
-			if df.IsNil() && !sf.IsNil() {
-				df.Set(sf)
-			}
-		case reflect.Struct:
-			mergeKeepNilable(df, sf)
+		if df.CanSet() {
+			mergeField(df, sf)
 		}
 	}
+}
+
+// mergeField dispatches a single struct field: copies src -> dst if dst is a
+// nil nil-able, or recurses into struct / non-nil pointer-to-struct fields.
+func mergeField(df, sf reflect.Value) {
+	k := df.Kind()
+	if k == reflect.Struct {
+		mergeKeepNilable(df, sf)
+		return
+	}
+	if k == reflect.Ptr && !df.IsNil() && !sf.IsNil() && df.Elem().Kind() == reflect.Struct {
+		mergeKeepNilable(df.Elem(), sf.Elem())
+		return
+	}
+	if isNilableKind(k) && df.IsNil() && !sf.IsNil() {
+		df.Set(sf)
+	}
+}
+
+func isNilableKind(k reflect.Kind) bool {
+	return k == reflect.Ptr || k == reflect.Map || k == reflect.Slice || k == reflect.Interface
 }
 
 // patchReplicaSet patches the replica set if it exists, else adds it as a new replica set.
