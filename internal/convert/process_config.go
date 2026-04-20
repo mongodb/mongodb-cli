@@ -30,7 +30,6 @@ const (
 // ProcessConfig that belongs to a cluster.
 type ProcessConfig struct {
 	ArbiterOnly                      *bool              `yaml:"arbiterOnly,omitempty" json:"arbiterOnly,omitempty"`
-	CPUAffinity                      []int              `yaml:"cpuAffinity,omitempty" json:"cpuAffinity,omitempty"`
 	AuditLogPath                     string             `yaml:"auditLogPath,omitempty" json:"auditLogPath,omitempty"`
 	AuditLogDestination              string             `yaml:"auditLogDestination,omitempty" json:"auditLogDestination,omitempty"`
 	AuditLogFormat                   string             `yaml:"auditLogFormat,omitempty" json:"auditLogFormat,omitempty"`
@@ -41,8 +40,7 @@ type ProcessConfig struct {
 	BindIP                           *string            `yaml:"bindIp,omitempty" json:"bindIp,omitempty"`
 	BindIPAll                        *bool              `yaml:"bindIpAll,omitempty" json:"bindIpAll,omitempty"`
 	Compression                      *map[string]any    `yaml:"compression,omitempty" json:"compression,omitempty"`
-	MaxIncomingConnections           *int               `yaml:"maxIncomingConnections,omitempty" json:"maxIncomingConnections,omitempty"`
-	ServiceExecutor                  string             `yaml:"serviceExecutor,omitempty" json:"serviceExecutor,omitempty"`
+	CPUAffinity                      []int              `yaml:"cpuAffinity,omitempty" json:"cpuAffinity,omitempty"`
 	DefaultRWConcern                 *DefaultRWConcern  `yaml:"defaultRWConcern,omitempty" json:"defaultRWConcern,omitempty"` //nolint:tagliatelle // correct from API
 	DirectoryPerDB                   *bool              `yaml:"directoryPerDB,omitempty" json:"directoryPerDB,omitempty"`
 	Disabled                         bool               `yaml:"disabled" json:"disabled"`
@@ -51,7 +49,6 @@ type ProcessConfig struct {
 	FeatureCompatibilityVersion      string             `yaml:"featureCompatibilityVersion,omitempty" json:"featureCompatibilityVersion,omitempty"`
 	Hidden                           *bool              `yaml:"hidden,omitempty" json:"hidden,omitempty"`
 	Horizons                         *map[string]string `yaml:"horizons,omitempty" json:"horizons,omitempty"`
-	MemberTags                       *map[string]string `yaml:"memberTags,omitempty" json:"memberTags,omitempty"`
 	Hostname                         string             `yaml:"hostname" json:"hostname"`
 	InMemory                         *map[string]any    `yaml:"inMemory,omitempty" json:"inMemory,omitempty"`
 	IndexBuildRetry                  *bool              `yaml:"indexBuildRetry,omitempty" json:"indexBuildRetry,omitempty"`
@@ -65,6 +62,8 @@ type ProcessConfig struct {
 	LogQuiet                         bool               `yaml:"logQuiet,omitempty" json:"logQuiet,omitempty"`
 	SyslogFacility                   string             `yaml:"syslogFacility,omitempty" json:"syslogFacility,omitempty"`
 	LogTimeStampFormat               string             `yaml:"logTimeStampFormat,omitempty" json:"logTimeStampFormat,omitempty"`
+	MaxIncomingConnections           *int               `yaml:"maxIncomingConnections,omitempty" json:"maxIncomingConnections,omitempty"`
+	MemberTags                       *map[string]string `yaml:"memberTags,omitempty" json:"memberTags,omitempty"`
 	Name                             string             `yaml:"name,omitempty" json:"name,omitempty"`
 	OperationProfiling               *map[string]any    `yaml:"operationProfiling,omitempty" json:"operationProfiling,omitempty"`
 	OplogMinRetentionHours           *float64           `yaml:"oplogMinRetentionHours,omitempty" json:"oplogMinRetentionHours,omitempty"`
@@ -78,6 +77,7 @@ type ProcessConfig struct {
 	SyncPeriodSecs                   *float64           `yaml:"syncPeriodSecs,omitempty" json:"syncPeriodSecs,omitempty"`
 	Votes                            *float64           `yaml:"votes,omitempty" json:"votes,omitempty"`
 	Security                         *map[string]any    `yaml:"security,omitempty" json:"security,omitempty"`
+	ServiceExecutor                  string             `yaml:"serviceExecutor,omitempty" json:"serviceExecutor,omitempty"`
 	SetParameter                     *map[string]any    `yaml:"setParameter,omitempty" json:"setParameter,omitempty"`
 	TLS                              *TLS               `yaml:"tls,omitempty" json:"tls,omitempty"`
 	Version                          string             `yaml:"version,omitempty" json:"version,omitempty"`

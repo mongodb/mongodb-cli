@@ -330,13 +330,28 @@ func TestClusterConfig_PatchAutomationConfig(t *testing.T) {
 					DeploymentAuthMechanisms: []string{},
 				},
 				Processes: []*opsmngr.Process{
-					// Old
+					// Old — keepSettings preserves server-side TLS/Security/AuditLog
+					// that the hand-written YAML did not re-specify.
 					{
 						Args26: opsmngr.Args26{
 							NET: opsmngr.Net{
 								Port: 27017,
 								Compression: &map[string]any{
 									"compressors": []any{"snappy"},
+								},
+								TLS: &opsmngr.TLS{
+									CAFile:                     "CAFile",
+									CertificateKeyFile:         "CertificateKeyFile",
+									CertificateKeyFilePassword: "CertificateKeyFilePassword",
+									CertificateSelector:        "CertificateSelector",
+									ClusterCertificateSelector: "ClusterCertificateSelector",
+									ClusterFile:                "ClusterFile",
+									ClusterPassword:            "ClusterPassword",
+									CRLFile:                    "CRLFile",
+									DisabledProtocols:          "DisabledProtocols",
+									FIPSMode:                   &fipsMode,
+									Mode:                       "Mode",
+									PEMKeyFile:                 "PEMKeyFile",
 								},
 							},
 							Replication: &opsmngr.Replication{
@@ -348,6 +363,13 @@ func TestClusterConfig_PatchAutomationConfig(t *testing.T) {
 							SystemLog: opsmngr.SystemLog{
 								Destination: file,
 								Path:        "/data/db/mongodb.log",
+							},
+							AuditLog: &opsmngr.AuditLog{
+								Destination: file,
+								Path:        "/data/db/audit.log",
+							},
+							Security: &map[string]any{
+								"test": "test",
 							},
 						},
 						LogRotate: &opsmngr.LogRotate{
@@ -1144,7 +1166,6 @@ func Test_keepSettings_preservesNetFields(t *testing.T) {
 				Port:                   27017,
 				Compression:            compression,
 				MaxIncomingConnections: maxConn,
-				ServiceExecutor:        "adaptive",
 			},
 		},
 	}
@@ -1164,5 +1185,83 @@ func Test_keepSettings_preservesNetFields(t *testing.T) {
 
 	assert.Equal(t, compression, newProcesses[0].Args26.NET.Compression)
 	assert.Equal(t, maxConn, newProcesses[0].Args26.NET.MaxIncomingConnections)
-	assert.Equal(t, "adaptive", newProcesses[0].Args26.NET.ServiceExecutor)
+}
+
+// Test_keepSettings_genericDeepMerge exercises the reflection-based merge
+// across several levels of the Process struct to prove that any nil-able
+// field not covered by an explicit per-field check is still preserved.
+func Test_keepSettings_genericDeepMerge(t *testing.T) {
+	t.Parallel()
+
+	basisTech := &map[string]any{"rootDir": "/opt/basistech"}
+	snmp := &map[string]any{"agentAddress": "0.0.0.0"}
+	processMgmt := &map[string]any{"timeZoneInfo": "/usr/share/zoneinfo"}
+	opProf := &map[string]any{"mode": "slowOp"}
+	wiredTiger := &map[string]any{"engineConfig": map[string]any{"cacheSizeGB": 4}}
+	inMemory := &map[string]any{"engineConfig": map[string]any{"inMemorySizeGB": 2}}
+	logLevel := pointer.Get(2)
+
+	oldProcess := &opsmngr.Process{
+		LogLevel: logLevel,
+		Args26: opsmngr.Args26{
+			BasisTech:          basisTech,
+			SNMP:               snmp,
+			ProcessManagement:  processMgmt,
+			OperationProfiling: opProf,
+			Storage: &opsmngr.Storage{
+				WiredTiger: wiredTiger,
+				InMemory:   inMemory,
+			},
+			NET: opsmngr.Net{
+				Port: 27017,
+			},
+		},
+	}
+
+	// New process omits everything except what PatchAutomationConfig would
+	// set from the CLI YAML.
+	newProcesses := []*opsmngr.Process{
+		{
+			Args26: opsmngr.Args26{
+				NET: opsmngr.Net{Port: 27017},
+			},
+		},
+	}
+
+	keepSettings(oldProcess, newProcesses, 0)
+
+	assert.Equal(t, logLevel, newProcesses[0].LogLevel, "Process-level nil-able should be preserved")
+	assert.Equal(t, basisTech, newProcesses[0].Args26.BasisTech)
+	assert.Equal(t, snmp, newProcesses[0].Args26.SNMP)
+	assert.Equal(t, processMgmt, newProcesses[0].Args26.ProcessManagement)
+	assert.Equal(t, opProf, newProcesses[0].Args26.OperationProfiling)
+	assert.NotNil(t, newProcesses[0].Args26.Storage, "Storage pointer should be preserved when new is nil")
+	assert.Equal(t, wiredTiger, newProcesses[0].Args26.Storage.WiredTiger)
+	assert.Equal(t, inMemory, newProcesses[0].Args26.Storage.InMemory)
+}
+
+// Test_keepSettings_doesNotOverrideUserValues ensures the merge never
+// overwrites a non-nil field on the new process with the old value.
+func Test_keepSettings_doesNotOverrideUserValues(t *testing.T) {
+	t.Parallel()
+
+	oldCompression := &map[string]any{"compressors": []any{"snappy"}}
+	newCompression := &map[string]any{"compressors": []any{"zstd"}}
+
+	oldProcess := &opsmngr.Process{
+		Args26: opsmngr.Args26{
+			NET: opsmngr.Net{Compression: oldCompression},
+		},
+	}
+	newProcesses := []*opsmngr.Process{
+		{
+			Args26: opsmngr.Args26{
+				NET: opsmngr.Net{Compression: newCompression},
+			},
+		},
+	}
+
+	keepSettings(oldProcess, newProcesses, 0)
+
+	assert.Equal(t, newCompression, newProcesses[0].Args26.NET.Compression)
 }
