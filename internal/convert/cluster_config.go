@@ -205,7 +205,7 @@ func mergeKeepNilable(dst, src reflect.Value) {
 		if !df.CanSet() {
 			continue
 		}
-		switch df.Kind() {
+		switch df.Kind() { //nolint:exhaustive // primitive and non-nil-able kinds are intentionally skipped; zero-value is ambiguous with "user cleared this"
 		case reflect.Ptr:
 			switch {
 			case df.IsNil() && !sf.IsNil():
