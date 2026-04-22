@@ -198,6 +198,9 @@ func AutomationConfigWithOneReplicaSet(name string, disabled bool) *opsmngr.Auto
 				Args26: opsmngr.Args26{
 					NET: opsmngr.Net{
 						Port: defaultMongoDPort,
+						Compression: &map[string]any{
+							"compressors": []any{"snappy"},
+						},
 						TLS: &opsmngr.TLS{
 							CAFile:                     "CAFile",
 							CertificateKeyFile:         "CertificateKeyFile",
@@ -260,8 +263,15 @@ func AutomationConfigWithOneReplicaSet(name string, disabled bool) *opsmngr.Auto
 						SlaveDelay:         pointer.Get[float64](1),
 						SecondaryDelaySecs: pointer.Get[float64](1),
 						Votes:              1,
+						Tags: &map[string]string{
+							"region": "us-east-1",
+						},
 					},
 				},
+				Settings: &map[string]any{
+					"chainingAllowed": true,
+				},
+				WriteConcernMajorityJournalDefault: "true",
 			},
 		},
 	}

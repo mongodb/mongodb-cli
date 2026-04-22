@@ -450,3 +450,120 @@ func Test_newMongosProcessConfig(t *testing.T) {
 	got := newMongosProcessConfig(p)
 	assert.Equal(t, want, got)
 }
+
+func Test_netFieldsRoundtrip(t *testing.T) {
+	compression := &map[string]any{
+		"compressors": []any{"snappy", "zlib"},
+	}
+	maxConn := pointer.Get(500)
+
+	omp := &opsmngr.Process{
+		Args26: opsmngr.Args26{
+			NET: opsmngr.Net{
+				Port:                   27017,
+				Compression:            compression,
+				MaxIncomingConnections: maxConn,
+				ServiceExecutor:        "adaptive",
+			},
+			Storage:     &opsmngr.Storage{DBPath: "/data/db"},
+			SystemLog:   opsmngr.SystemLog{Destination: "file", Path: "/data/log/mongodb.log"},
+			Replication: &opsmngr.Replication{ReplSetName: "myRS"},
+		},
+		FeatureCompatibilityVersion: "4.4",
+		Hostname:                    "host0",
+		Name:                        "myRS_1",
+		ProcessType:                 "mongod",
+		Version:                     "4.4.1",
+	}
+	omm := &opsmngr.Member{
+		BuildIndexes: true,
+		Host:         "myRS_1",
+		Priority:     1,
+		Votes:        1,
+	}
+
+	// Describe direction
+	pc := newReplicaSetProcessConfig(omm, omp)
+	assert.Equal(t, compression, pc.Compression)
+	assert.Equal(t, maxConn, pc.MaxIncomingConnections)
+	assert.Equal(t, "adaptive", pc.ServiceExecutor)
+
+	// Update direction
+	n := pc.net()
+	assert.Equal(t, compression, n.Compression)
+	assert.Equal(t, maxConn, n.MaxIncomingConnections)
+	assert.Equal(t, "adaptive", n.ServiceExecutor)
+}
+
+func Test_memberFieldsRoundtrip(t *testing.T) {
+	horizons := &map[string]string{
+		"external": "external-host:27017",
+	}
+	tags := &map[string]string{
+		"region": "us-east-1",
+		"usage":  "analytics",
+	}
+	omm := &opsmngr.Member{
+		BuildIndexes: true,
+		Host:         "myRS_1",
+		Priority:     1,
+		Votes:        1,
+		Horizons:     horizons,
+		Tags:         tags,
+	}
+	omp := &opsmngr.Process{
+		Args26: opsmngr.Args26{
+			NET:         opsmngr.Net{Port: 27017},
+			Storage:     &opsmngr.Storage{DBPath: "/data"},
+			SystemLog:   opsmngr.SystemLog{Destination: "file", Path: "/log"},
+			Replication: &opsmngr.Replication{ReplSetName: "myRS"},
+		},
+		FeatureCompatibilityVersion: "4.4",
+		Hostname:                    "host0",
+		Name:                        "myRS_1",
+		ProcessType:                 "mongod",
+		Version:                     "4.4.1",
+	}
+
+	// Describe direction
+	pc := newReplicaSetProcessConfig(omm, omp)
+	assert.Equal(t, horizons, pc.Horizons)
+	assert.Equal(t, tags, pc.MemberTags)
+
+	// Update direction
+	m := pc.member(0)
+	assert.Equal(t, horizons, m.Horizons)
+	assert.Equal(t, tags, m.Tags)
+}
+
+func Test_processFieldsRoundtrip(t *testing.T) {
+	cpuAffinity := []int{0, 1, 2, 3}
+	omp := &opsmngr.Process{
+		Args26: opsmngr.Args26{
+			NET:         opsmngr.Net{Port: 27017},
+			Storage:     &opsmngr.Storage{DBPath: "/data"},
+			SystemLog:   opsmngr.SystemLog{Destination: "file", Path: "/log"},
+			Replication: &opsmngr.Replication{ReplSetName: "myRS"},
+		},
+		CPUAffinity:                 cpuAffinity,
+		FeatureCompatibilityVersion: "4.4",
+		Hostname:                    "host0",
+		Name:                        "myRS_1",
+		ProcessType:                 "mongod",
+		Version:                     "4.4.1",
+	}
+	omm := &opsmngr.Member{
+		BuildIndexes: true,
+		Host:         "myRS_1",
+		Priority:     1,
+		Votes:        1,
+	}
+
+	// Describe direction
+	pc := newReplicaSetProcessConfig(omm, omp)
+	assert.Equal(t, cpuAffinity, pc.CPUAffinity)
+
+	// Update direction
+	proc := pc.process()
+	assert.Equal(t, cpuAffinity, proc.CPUAffinity)
+}

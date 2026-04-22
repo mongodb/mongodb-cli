@@ -24,11 +24,13 @@ import (
 
 // RSConfig shared properties of replica sets, config servers, and sharded clusters.
 type RSConfig struct {
-	Name                        string            `yaml:"name,omitempty" json:"name,omitempty"`
-	FeatureCompatibilityVersion string            `yaml:"featureCompatibilityVersion,omitempty" json:"featureCompatibilityVersion,omitempty"`
-	Processes                   []*ProcessConfig  `yaml:"processes,omitempty" json:"processes,omitempty"`
-	Tags                        []*map[string]any `yaml:"tags,omitempty" json:"tags,omitempty"`
-	Version                     string            `yaml:"version,omitempty" json:"version,omitempty"`
+	Name                               string            `yaml:"name,omitempty" json:"name,omitempty"`
+	FeatureCompatibilityVersion        string            `yaml:"featureCompatibilityVersion,omitempty" json:"featureCompatibilityVersion,omitempty"`
+	Processes                          []*ProcessConfig  `yaml:"processes,omitempty" json:"processes,omitempty"`
+	Tags                               []*map[string]any `yaml:"tags,omitempty" json:"tags,omitempty"`
+	Version                            string            `yaml:"version,omitempty" json:"version,omitempty"`
+	Settings                           *map[string]any   `yaml:"settings,omitempty" json:"settings,omitempty"`
+	WriteConcernMajorityJournalDefault string            `yaml:"writeConcernMajorityJournalDefault,omitempty" json:"writeConcernMajorityJournalDefault,omitempty"`
 }
 
 type patcher func(*ProcessConfig, string) *opsmngr.Process
@@ -110,9 +112,11 @@ func newReplicaSet(c *RSConfig) (*opsmngr.ReplicaSet, error) {
 	}
 
 	rs := &opsmngr.ReplicaSet{
-		ID:              c.Name,
-		Members:         make([]opsmngr.Member, len(c.Processes)),
-		ProtocolVersion: pv,
+		ID:                                 c.Name,
+		Members:                            make([]opsmngr.Member, len(c.Processes)),
+		ProtocolVersion:                    pv,
+		Settings:                           c.Settings,
+		WriteConcernMajorityJournalDefault: c.WriteConcernMajorityJournalDefault,
 	}
 
 	return rs, nil
@@ -128,8 +132,10 @@ func newRSConfig(in *opsmngr.AutomationConfig, id string) *RSConfig {
 	}
 	rs := in.ReplicaSets[rsi]
 	out := &RSConfig{
-		Name:      rs.ID,
-		Processes: make([]*ProcessConfig, len(rs.Members)),
+		Name:                               rs.ID,
+		Processes:                          make([]*ProcessConfig, len(rs.Members)),
+		Settings:                           rs.Settings,
+		WriteConcernMajorityJournalDefault: rs.WriteConcernMajorityJournalDefault,
 	}
 
 	for i, m := range rs.Members {

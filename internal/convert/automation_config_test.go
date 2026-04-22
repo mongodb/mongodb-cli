@@ -35,13 +35,23 @@ func TestFromAutomationConfig(t *testing.T) {
 			{
 				RSConfig: RSConfig{
 					Name: name,
+					Settings: &map[string]any{
+						"chainingAllowed": true,
+					},
+					WriteConcernMajorityJournalDefault: "true",
 					Processes: []*ProcessConfig{
 						{
-							ArbiterOnly:                 pointer.Get(false),
-							BuildIndexes:                pointer.Get(true),
-							DBPath:                      "/data/db/",
-							Disabled:                    false,
-							Hidden:                      pointer.Get(false),
+							ArbiterOnly:  pointer.Get(false),
+							BuildIndexes: pointer.Get(true),
+							Compression: &map[string]any{
+								"compressors": []any{"snappy"},
+							},
+							DBPath:   "/data/db/",
+							Disabled: false,
+							Hidden:   pointer.Get(false),
+							MemberTags: &map[string]string{
+								"region": "us-east-1",
+							},
 							Hostname:                    "host0",
 							LogPath:                     "/data/db/mongodb.log",
 							LogDestination:              file,
@@ -93,13 +103,23 @@ func TestFromAutomationConfig(t *testing.T) {
 			{
 				RSConfig: RSConfig{
 					Name: name,
+					Settings: &map[string]any{
+						"chainingAllowed": true,
+					},
+					WriteConcernMajorityJournalDefault: "true",
 					Processes: []*ProcessConfig{
 						{
-							ArbiterOnly:                 pointer.Get(false),
-							BuildIndexes:                pointer.Get(true),
-							DBPath:                      "/data/db/",
-							Disabled:                    true,
-							Hidden:                      pointer.Get(false),
+							ArbiterOnly:  pointer.Get(false),
+							BuildIndexes: pointer.Get(true),
+							Compression: &map[string]any{
+								"compressors": []any{"snappy"},
+							},
+							DBPath:   "/data/db/",
+							Disabled: true,
+							Hidden:   pointer.Get(false),
+							MemberTags: &map[string]string{
+								"region": "us-east-1",
+							},
 							Hostname:                    "host0",
 							LogPath:                     "/data/db/mongodb.log",
 							LogDestination:              file,

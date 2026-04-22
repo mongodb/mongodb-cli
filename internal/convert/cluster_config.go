@@ -16,6 +16,7 @@ package convert
 
 import (
 	"fmt"
+	"reflect"
 	"strconv"
 
 	"go.mongodb.org/ops-manager/opsmngr"
@@ -169,20 +170,63 @@ func patchProcesses(out *opsmngr.AutomationConfig, newReplicaSetID string, newPr
 	}
 }
 
-// keepSettings if the process exists keep settings we don't expose via the CLI config file.
+// keepSettings preserves server-side fields that the CLI's describe/update
+// roundtrip would otherwise silently drop. It walks the Process reflectively
+// and, for every nil-able field (pointer, slice, map, interface), copies the
+// old value onto the new process when the new value is nil. It recurses into
+// struct and non-nil pointer-to-struct fields so nested optional blocks
+// (e.g. Args26.NET.Compression, Args26.Storage.WiredTiger) are preserved too.
+//
+// Primitive scalars (string, int, bool, float) are deliberately NOT merged:
+// the zero value is ambiguous with "user cleared this", and the CLI's
+// ProcessConfig already roundtrips the scalar fields we surface, so they
+// cannot be silently lost through this path.
+//
+// Trade-off: a user cannot unset a previously-set nil-able field by omitting
+// it from the YAML — old will always win when new is nil. We accept this
+// because the recurring bug is fields getting wiped, not preserved, and an
+// explicit per-field allow-list has to be extended every time the SDK grows
+// a new optional.
 func keepSettings(oldProcess *opsmngr.Process, newProcesses []*opsmngr.Process, pos int) {
-	if oldProcess.Args26.BasisTech != nil {
-		newProcesses[pos].Args26.BasisTech = oldProcess.Args26.BasisTech
+	mergeKeepNilable(
+		reflect.ValueOf(newProcesses[pos]).Elem(),
+		reflect.ValueOf(oldProcess).Elem(),
+	)
+}
+
+// mergeKeepNilable copies src -> dst for every nil-able field on dst that is
+// currently nil. dst and src must be the same struct type.
+func mergeKeepNilable(dst, src reflect.Value) {
+	if dst.Kind() != reflect.Struct || src.Kind() != reflect.Struct {
+		return
 	}
-	if oldProcess.Args26.OperationProfiling != nil {
-		newProcesses[pos].Args26.OperationProfiling = oldProcess.Args26.OperationProfiling
+	for i := 0; i < dst.NumField(); i++ {
+		df, sf := dst.Field(i), src.Field(i)
+		if df.CanSet() {
+			mergeField(df, sf)
+		}
 	}
-	if oldProcess.Args26.ProcessManagement != nil {
-		newProcesses[pos].Args26.ProcessManagement = oldProcess.Args26.ProcessManagement
+}
+
+// mergeField dispatches a single struct field: copies src -> dst if dst is a
+// nil nil-able, or recurses into struct / non-nil pointer-to-struct fields.
+func mergeField(df, sf reflect.Value) {
+	k := df.Kind()
+	if k == reflect.Struct {
+		mergeKeepNilable(df, sf)
+		return
 	}
-	if oldProcess.Args26.SNMP != nil {
-		newProcesses[pos].Args26.SNMP = oldProcess.Args26.SNMP
+	if k == reflect.Ptr && !df.IsNil() && !sf.IsNil() && df.Elem().Kind() == reflect.Struct {
+		mergeKeepNilable(df.Elem(), sf.Elem())
+		return
 	}
+	if isNilableKind(k) && df.IsNil() && !sf.IsNil() {
+		df.Set(sf)
+	}
+}
+
+func isNilableKind(k reflect.Kind) bool {
+	return k == reflect.Ptr || k == reflect.Map || k == reflect.Slice || k == reflect.Interface
 }
 
 // patchReplicaSet patches the replica set if it exists, else adds it as a new replica set.
