@@ -18,7 +18,7 @@ require (
 	github.com/google/go-github/v61 v61.0.0
 	github.com/hinshun/vt10x v0.0.0-20220301184237-5011da428d02
 	github.com/klauspost/compress v1.18.5
-	github.com/mattn/go-isatty v0.0.20
+	github.com/mattn/go-isatty v0.0.22
 	github.com/mongodb-forks/digest v1.1.0
 	github.com/mongodb-labs/cobra2snooty v1.19.1
 	github.com/pelletier/go-toml v1.9.5
