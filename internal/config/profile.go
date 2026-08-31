@@ -63,6 +63,17 @@ const (
 	defaultPermissions           = 0700
 	skipUpdateCheck              = "skip_update_check"
 	MongoCLI                     = "mongocli"
+	// Standby Clusters settings. These commands talk to S3 directly, not to
+	// the Ops Manager API, so they use their own set of keys.
+	standbyS3Bucket           = "standby_clusters_s3_bucket"
+	standbyS3Key              = "standby_clusters_s3_key"
+	standbyS3Endpoint         = "standby_clusters_s3_endpoint"
+	standbyAWSRegion          = "standby_clusters_aws_region"
+	standbyAWSAuthMode        = "standby_clusters_aws_auth_mode"
+	standbyAWSAccessKeyID     = "standby_clusters_aws_access_key_id"
+	standbyAWSSecretAccessKey = "standby_clusters_aws_secret_access_key"
+	standbyAWSRoleARN         = "standby_clusters_aws_role_arn"
+	standbyAWSProfile         = "standby_clusters_aws_profile"
 )
 
 var (
@@ -110,6 +121,15 @@ func Properties() []string {
 		skipUpdateCheck,
 		AccessTokenField,
 		RefreshTokenField,
+		standbyS3Bucket,
+		standbyS3Key,
+		standbyS3Endpoint,
+		standbyAWSRegion,
+		standbyAWSAuthMode,
+		standbyAWSAccessKeyID,
+		standbyAWSSecretAccessKey,
+		standbyAWSRoleARN,
+		standbyAWSProfile,
 	}
 }
 
@@ -452,6 +472,114 @@ func (p *Profile) ClientID() string {
 	return p.GetString(ClientIDField)
 }
 
+// StandbyS3Bucket gets the S3 bucket holding the standby-clusters DR state file.
+func StandbyS3Bucket() string { return Default().StandbyS3Bucket() }
+func (p *Profile) StandbyS3Bucket() string {
+	return p.GetString(standbyS3Bucket)
+}
+
+// SetStandbyS3Bucket sets the S3 bucket holding the standby-clusters DR state file.
+func SetStandbyS3Bucket(v string) { Default().SetStandbyS3Bucket(v) }
+func (p *Profile) SetStandbyS3Bucket(v string) {
+	p.Set(standbyS3Bucket, v)
+}
+
+// StandbyS3Key gets the object key of the standby-clusters DR state file.
+func StandbyS3Key() string { return Default().StandbyS3Key() }
+func (p *Profile) StandbyS3Key() string {
+	return p.GetString(standbyS3Key)
+}
+
+// SetStandbyS3Key sets the object key of the standby-clusters DR state file.
+func SetStandbyS3Key(v string) { Default().SetStandbyS3Key(v) }
+func (p *Profile) SetStandbyS3Key(v string) {
+	p.Set(standbyS3Key, v)
+}
+
+// StandbyS3Endpoint gets the custom S3 endpoint for S3-compatible stores.
+func StandbyS3Endpoint() string { return Default().StandbyS3Endpoint() }
+func (p *Profile) StandbyS3Endpoint() string {
+	return p.GetString(standbyS3Endpoint)
+}
+
+// SetStandbyS3Endpoint sets the custom S3 endpoint for S3-compatible stores.
+func SetStandbyS3Endpoint(v string) { Default().SetStandbyS3Endpoint(v) }
+func (p *Profile) SetStandbyS3Endpoint(v string) {
+	p.Set(standbyS3Endpoint, v)
+}
+
+// StandbyAWSRegion gets the AWS region of the standby-clusters S3 bucket.
+func StandbyAWSRegion() string { return Default().StandbyAWSRegion() }
+func (p *Profile) StandbyAWSRegion() string {
+	return p.GetString(standbyAWSRegion)
+}
+
+// SetStandbyAWSRegion sets the AWS region of the standby-clusters S3 bucket.
+func SetStandbyAWSRegion(v string) { Default().SetStandbyAWSRegion(v) }
+func (p *Profile) SetStandbyAWSRegion(v string) {
+	p.Set(standbyAWSRegion, v)
+}
+
+// StandbyAWSAuthMode gets the AWS authentication mode for standby-clusters commands.
+func StandbyAWSAuthMode() string { return Default().StandbyAWSAuthMode() }
+func (p *Profile) StandbyAWSAuthMode() string {
+	return p.GetString(standbyAWSAuthMode)
+}
+
+// SetStandbyAWSAuthMode sets the AWS authentication mode for standby-clusters commands.
+func SetStandbyAWSAuthMode(v string) { Default().SetStandbyAWSAuthMode(v) }
+func (p *Profile) SetStandbyAWSAuthMode(v string) {
+	p.Set(standbyAWSAuthMode, v)
+}
+
+// StandbyAWSAccessKeyID gets the AWS access key ID for standby-clusters commands.
+func StandbyAWSAccessKeyID() string { return Default().StandbyAWSAccessKeyID() }
+func (p *Profile) StandbyAWSAccessKeyID() string {
+	return p.GetString(standbyAWSAccessKeyID)
+}
+
+// SetStandbyAWSAccessKeyID sets the AWS access key ID for standby-clusters commands.
+func SetStandbyAWSAccessKeyID(v string) { Default().SetStandbyAWSAccessKeyID(v) }
+func (p *Profile) SetStandbyAWSAccessKeyID(v string) {
+	p.Set(standbyAWSAccessKeyID, v)
+}
+
+// StandbyAWSSecretAccessKey gets the AWS secret access key for standby-clusters commands.
+func StandbyAWSSecretAccessKey() string { return Default().StandbyAWSSecretAccessKey() }
+func (p *Profile) StandbyAWSSecretAccessKey() string {
+	return p.GetString(standbyAWSSecretAccessKey)
+}
+
+// SetStandbyAWSSecretAccessKey sets the AWS secret access key for standby-clusters commands.
+func SetStandbyAWSSecretAccessKey(v string) { Default().SetStandbyAWSSecretAccessKey(v) }
+func (p *Profile) SetStandbyAWSSecretAccessKey(v string) {
+	p.Set(standbyAWSSecretAccessKey, v)
+}
+
+// StandbyAWSRoleARN gets the AWS role ARN to assume for standby-clusters commands.
+func StandbyAWSRoleARN() string { return Default().StandbyAWSRoleARN() }
+func (p *Profile) StandbyAWSRoleARN() string {
+	return p.GetString(standbyAWSRoleARN)
+}
+
+// SetStandbyAWSRoleARN sets the AWS role ARN to assume for standby-clusters commands.
+func SetStandbyAWSRoleARN(v string) { Default().SetStandbyAWSRoleARN(v) }
+func (p *Profile) SetStandbyAWSRoleARN(v string) {
+	p.Set(standbyAWSRoleARN, v)
+}
+
+// StandbyAWSProfile gets the named AWS profile used with the default credentials chain.
+func StandbyAWSProfile() string { return Default().StandbyAWSProfile() }
+func (p *Profile) StandbyAWSProfile() string {
+	return p.GetString(standbyAWSProfile)
+}
+
+// SetStandbyAWSProfile sets the named AWS profile used with the default credentials chain.
+func SetStandbyAWSProfile(v string) { Default().SetStandbyAWSProfile(v) }
+func (p *Profile) SetStandbyAWSProfile(v string) {
+	p.Set(standbyAWSProfile, v)
+}
+
 // IsAccessSet return true if API keys have been set up.
 // For Ops Manager we also check for the base URL.
 func IsAccessSet() bool { return Default().IsAccessSet() }
@@ -470,7 +598,7 @@ func (p *Profile) Map() map[string]string {
 	settings := viper.GetStringMapString(p.Name())
 	profileSettings := make(map[string]string, len(settings)+1)
 	for k, v := range settings {
-		if k == privateAPIKey || k == AccessTokenField || k == RefreshTokenField {
+		if k == privateAPIKey || k == AccessTokenField || k == RefreshTokenField || k == standbyAWSSecretAccessKey {
 			profileSettings[k] = "redacted"
 		} else {
 			profileSettings[k] = v

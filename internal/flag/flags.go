@@ -155,6 +155,13 @@ const (
 	S3AuthMethod                    = "s3AuthMethod"                    // S3AuthMethod flag
 	S3BucketEndpoint                = "s3BucketEndpoint"                // S3BucketEndpoint flag
 	S3BucketName                    = "s3BucketName"                    // S3BucketName flag
+	S3Key                           = "s3Key"                           // S3Key flag
+	AWSRegion                       = "awsRegion"                       // AWSRegion flag
+	AWSAuthMode                     = "awsAuthMode"                     // AWSAuthMode flag
+	AWSRoleARN                      = "awsRoleArn"                      // AWSRoleARN flag
+	AWSProfile                      = "awsProfile"                      // AWSProfile flag
+	Watch                           = "watch"                           // Watch flag
+	WatchShort                      = "w"                               // WatchShort flag
 	S3MaxConnections                = "s3MaxConnections"                // S3MaxConnections flag
 	DisableProxyS3                  = "disableProxyS3"                  // DisableProxyS3 flag
 	AcceptedTos                     = "acceptedTos"                     // AcceptedTos flag
