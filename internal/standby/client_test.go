@@ -22,12 +22,10 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/mocks"
+	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/standby"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-
-	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/standby"
-
-	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/mocks"
 )
 
 func standbyDoc() *standby.RemoteDRState {

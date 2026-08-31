@@ -1,5 +1,11 @@
 {
 	"github.com/AlecAivazis/survey/v2": "mongocli",
+	"github.com/aws/aws-sdk-go-v2": "mongocli",
+	"github.com/aws/aws-sdk-go-v2/config": "mongocli",
+	"github.com/aws/aws-sdk-go-v2/credentials": "mongocli",
+	"github.com/aws/aws-sdk-go-v2/service/s3": "mongocli",
+	"github.com/aws/aws-sdk-go-v2/service/sts": "mongocli",
+	"github.com/aws/smithy-go": "mongocli",
 	"github.com/Masterminds/semver/v3": "mongocli",
 	"github.com/PaesslerAG/jsonpath": "mongocli",
 	"github.com/briandowns/spinner": "mongocli",

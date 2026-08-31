@@ -158,9 +158,9 @@ func withAuthHint(err error) error {
 	msg := err.Error()
 	switch {
 	case strings.Contains(msg, "refresh cached SSO token failed") || strings.Contains(msg, "InvalidGrantException"):
-		return fmt.Errorf("%w\n\nYour AWS SSO session has expired or is missing. Run 'aws sso login' (optionally with --profile) and try again.", err)
+		return fmt.Errorf("%w\n\nyour AWS SSO session has expired or is missing, run 'aws sso login' (optionally with --profile) and try again", err)
 	case strings.Contains(msg, "failed to refresh cached credentials"), strings.Contains(msg, "no EC2 IMDS role found"), strings.Contains(msg, "NoCredentialProviders"):
-		return fmt.Errorf("%w\n\nNo usable AWS credentials found. Configure them via 'mongocli ops-manager standby-clusters configure', AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY, or an AWS profile ('aws sso login' for SSO).", err)
+		return fmt.Errorf("%w\n\nno usable AWS credentials found, configure them via 'mongocli ops-manager standby-clusters configure', AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY, or an AWS profile ('aws sso login' for SSO)", err)
 	default:
 		return err
 	}

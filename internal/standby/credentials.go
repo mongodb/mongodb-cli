@@ -35,7 +35,7 @@ const (
 	// AuthModeAssumeRole uses an IAM role ARN for auto-refreshing credentials.
 	AuthModeAssumeRole AuthMode = "assumeRole"
 	// AuthModeStaticCredentials uses long-lived IAM user credentials (access key and secret key, no session token).
-	AuthModeStaticCredentials AuthMode = "staticCredentials"
+	AuthModeStaticCredentials AuthMode = "staticCredentials" // #nosec G101 -- auth mode name, not a credential
 	// AuthModeCredentialsChain uses the default AWS credentials chain (env vars, ~/.aws/credentials, IAM role, etc.).
 	AuthModeCredentialsChain AuthMode = "credentialsChain"
 )
@@ -75,33 +75,46 @@ func (c Credentials) Validate() error {
 
 	switch c.AuthMode {
 	case AuthModeAssumeRole:
-		if c.RoleArn == "" {
-			return errors.New("aws.roleArn must be provided when aws.authMode is assumeRole")
-		}
-		if c.AccessKeyID != "" || c.SecretAccessKey != "" || c.SessionToken != "" {
-			return errors.New("aws.accessKeyId, aws.secretAccessKey, and aws.sessionToken must not be provided when aws.authMode is assumeRole")
-		}
+		return c.validateAssumeRole()
 	case AuthModeStaticCredentials:
-		if c.AccessKeyID == "" {
-			return errors.New("aws.accessKeyId must be provided when aws.authMode is staticCredentials")
-		}
-		if c.SecretAccessKey == "" {
-			return errors.New("aws.secretAccessKey must be provided when aws.authMode is staticCredentials")
-		}
-		if c.RoleArn != "" {
-			return errors.New("aws.roleArn must not be provided when aws.authMode is staticCredentials")
-		}
-		if c.SessionToken != "" {
-			return errors.New("aws.sessionToken must not be provided when aws.authMode is staticCredentials")
-		}
+		return c.validateStaticCredentials()
 	case AuthModeCredentialsChain:
-		if c.RoleArn != "" || c.AccessKeyID != "" || c.SecretAccessKey != "" || c.SessionToken != "" {
-			return errors.New("aws.roleArn, aws.accessKeyId, aws.secretAccessKey, and aws.sessionToken must not be provided when aws.authMode is credentialsChain")
-		}
+		return c.validateCredentialsChain()
 	default:
 		return fmt.Errorf("aws.authMode must be one of %v, got %s", validAuthModes, c.AuthMode)
 	}
+}
 
+func (c Credentials) validateAssumeRole() error {
+	if c.RoleArn == "" {
+		return errors.New("aws.roleArn must be provided when aws.authMode is assumeRole")
+	}
+	if c.AccessKeyID != "" || c.SecretAccessKey != "" || c.SessionToken != "" {
+		return errors.New("aws.accessKeyId, aws.secretAccessKey, and aws.sessionToken must not be provided when aws.authMode is assumeRole")
+	}
+	return nil
+}
+
+func (c Credentials) validateStaticCredentials() error {
+	if c.AccessKeyID == "" {
+		return errors.New("aws.accessKeyId must be provided when aws.authMode is staticCredentials")
+	}
+	if c.SecretAccessKey == "" {
+		return errors.New("aws.secretAccessKey must be provided when aws.authMode is staticCredentials")
+	}
+	if c.RoleArn != "" {
+		return errors.New("aws.roleArn must not be provided when aws.authMode is staticCredentials")
+	}
+	if c.SessionToken != "" {
+		return errors.New("aws.sessionToken must not be provided when aws.authMode is staticCredentials")
+	}
+	return nil
+}
+
+func (c Credentials) validateCredentialsChain() error {
+	if c.RoleArn != "" || c.AccessKeyID != "" || c.SecretAccessKey != "" || c.SessionToken != "" {
+		return errors.New("aws.roleArn, aws.accessKeyId, aws.secretAccessKey, and aws.sessionToken must not be provided when aws.authMode is credentialsChain")
+	}
 	return nil
 }
 
