@@ -57,10 +57,12 @@ Related Commands
 ----------------
 
 * :ref:`mongocli-ops-manager-standby-clusters-configure` - Configure access to the disaster recovery state file of your standby cluster.
+* :ref:`mongocli-ops-manager-standby-clusters-describe` - Return the current disaster recovery state of your standby cluster.
 
 
 .. toctree::
    :titlesonly:
 
    configure </command/mongocli-ops-manager-standby-clusters-configure>
+   describe </command/mongocli-ops-manager-standby-clusters-describe>
 

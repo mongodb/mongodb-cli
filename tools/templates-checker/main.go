@@ -37,6 +37,12 @@ func main() {
 			log.Fatal(err)
 		}
 
+		if builderFunc.TemplateType == nil {
+			log.Fatalf("could not determine the struct type rendered by the template of the command opts at %v: "+
+				"the Print argument must be assigned from a method call returning exactly (T, error)",
+				builderFunc.Pkg.Fset.Position(builderFunc.CommandOptsStruct.Pos()))
+		}
+
 		validationResult, err := templateTree.Validate(builderFunc.Pkg, builderFunc.TemplateType.NamedStruct)
 		if err != nil {
 			log.Fatal(err)
