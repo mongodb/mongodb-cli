@@ -34,6 +34,8 @@ const (
 	defaultAWSRegion = "us-east-1"
 )
 
+var errMissingStateFileKey = errors.New("no DR state file configured. Set it with 'mongocli ops-manager standby-clusters configure' or pass --s3Key")
+
 func Builder() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     Use,
@@ -109,8 +111,6 @@ func (o *opts) credentials() standby.Credentials {
 func (o *opts) stateFileKey() string {
 	return cmp.Or(o.key, config.StandbyS3Key())
 }
-
-var errMissingStateFileKey = errors.New("no DR state file configured. Set it with 'mongocli ops-manager standby-clusters configure' or pass --s3Key")
 
 // initStore builds the S3 state store from the resolved credentials. Used as
 // a PreRunE step by the commands that talk to the DR state file.

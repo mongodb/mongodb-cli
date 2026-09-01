@@ -19,6 +19,7 @@ import (
 	"fmt"
 
 	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/cli"
+	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/cli/require"
 	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/flag"
 	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/standby"
 	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/usage"
@@ -63,9 +64,8 @@ func DescribeBuilder() *cobra.Command {
 
   # Return the full DR state document as JSON:
   mongocli ops-manager standby-clusters describe -o json`,
-		Args: cobra.NoArgs,
+		Args: require.NoArgs,
 		PreRunE: func(cmd *cobra.Command, _ []string) error {
-			o.OutWriter = cmd.OutOrStdout()
 			return o.PreRunE(
 				o.initStore(cmd.Context()),
 				o.InitOutput(cmd.OutOrStdout(), describeTemplate),
