@@ -75,7 +75,7 @@ Options
    * - --s3BucketEndpoint
      - string
      - false
-     - URL of an S3-compatible endpoint. Use only for S3-compatible stores.
+     - URL of an S3-compatible endpoint for the standby cluster DR state file. Use only for S3-compatible stores.
    * - --s3BucketName
      - string
      - false
