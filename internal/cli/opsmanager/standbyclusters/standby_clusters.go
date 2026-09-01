@@ -25,8 +25,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Resource name of this command subtree.
-const Use = "standby-clusters"
+const (
+	// Resource name of this command subtree.
+	Use              = "standby-clusters"
+	defaultAWSRegion = "us-east-1"
+)
 
 func Builder() *cobra.Command {
 	cmd := &cobra.Command{
@@ -100,8 +103,6 @@ func (o *opts) credentials() standby.Credentials {
 func (o *opts) stateFileKey() string {
 	return cmp.Or(o.key, config.StandbyS3Key())
 }
-
-const defaultAWSRegion = "us-east-1"
 
 func addSharedFlags(cmd *cobra.Command, o *opts) {
 	cmd.Flags().StringVar(&o.bucket, flag.S3BucketName, "", usage.StandbyS3BucketName)

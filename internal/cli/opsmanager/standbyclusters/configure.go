@@ -17,9 +17,10 @@ package standbyclusters
 import (
 	"context"
 	"fmt"
-	"io"
 
 	"github.com/AlecAivazis/survey/v2"
+	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/cli"
+	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/cli/require"
 	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/config"
 	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/standby"
 	"github.com/spf13/cobra"
@@ -27,15 +28,14 @@ import (
 
 type ConfigureOpts struct {
 	opts
-
-	out io.Writer
+	cli.OutputOpts
 }
 
 func (o *ConfigureOpts) Run(ctx context.Context) error {
-	if o.out == nil {
+	if o.OutWriter == nil {
 		return fmt.Errorf("no output writer configured")
 	}
-	_, _ = fmt.Fprintf(o.out, `You are configuring access to the standby cluster disaster recovery (DR)
+	_, _ = fmt.Fprintf(o.OutWriter, `You are configuring access to the standby cluster disaster recovery (DR)
 state file in Amazon S3. These settings are stored in your mongocli profile
 and never touch the Ops Manager API.
 
@@ -62,7 +62,7 @@ and never touch the Ops Manager API.
 	if state == nil {
 		return fmt.Errorf("no DR state file found at %s; verify the bucket and key", store.FullPath())
 	}
-	_, _ = fmt.Fprintf(o.out, "Verified access to %s (current state: %s).\n", store.FullPath(), state.State)
+	_, _ = fmt.Fprintf(o.OutWriter, "Verified access to %s (current state: %s).\n", store.FullPath(), state.State)
 
 	o.save()
 
@@ -70,7 +70,7 @@ and never touch the Ops Manager API.
 		return err
 	}
 
-	_, _ = fmt.Fprintf(o.out, `
+	_, _ = fmt.Fprintf(o.OutWriter, `
 Your standby cluster settings are saved in profile '%s'.
 You can use [%s config set] to change these settings at a later time.
 `, config.Name(), config.MongoCLI)
@@ -78,15 +78,16 @@ You can use [%s config set] to change these settings at a later time.
 }
 
 func (o *ConfigureOpts) save() {
-	config.SetStandbyS3Bucket(o.credentials().BucketName)
+	creds := o.credentials()
+	config.SetStandbyS3Bucket(creds.BucketName)
 	config.SetStandbyS3Key(o.stateFileKey())
-	config.SetStandbyAWSRegion(o.credentials().Region)
-	config.SetStandbyAWSAuthMode(string(o.credentials().AuthMode))
-	config.SetStandbyAWSAccessKeyID(o.credentials().AccessKeyID)
-	config.SetStandbyAWSSecretAccessKey(o.credentials().SecretAccessKey)
-	config.SetStandbyAWSRoleARN(o.credentials().RoleArn)
-	config.SetStandbyAWSProfile(o.credentials().AWSProfile)
-	config.SetStandbyS3Endpoint(o.credentials().Endpoint)
+	config.SetStandbyAWSRegion(creds.Region)
+	config.SetStandbyAWSAuthMode(string(creds.AuthMode))
+	config.SetStandbyAWSAccessKeyID(creds.AccessKeyID)
+	config.SetStandbyAWSSecretAccessKey(creds.SecretAccessKey)
+	config.SetStandbyAWSRoleARN(creds.RoleArn)
+	config.SetStandbyAWSProfile(creds.AWSProfile)
+	config.SetStandbyS3Endpoint(creds.Endpoint)
 }
 
 // ask prompts for every value not already provided via flags. Profile
@@ -118,11 +119,11 @@ func (o *ConfigureOpts) ask() error {
 
 // askLocation prompts for the state file location: bucket, key, region, endpoint.
 func (o *ConfigureOpts) askLocation(c *standby.Credentials) error {
-	if err := askInput(&c.BucketName, "S3 bucket name holding the DR state file (name only, no s3:// prefix or URL):", "", o.bucket != ""); err != nil {
+	if err := askInput(&c.BucketName, "S3 bucket name holding the DR state file (name only, no s3:// prefix or URL):", c.BucketName, o.bucket != ""); err != nil {
 		return err
 	}
 	key := o.stateFileKey()
-	if err := askInput(&key, "DR state file object key within the bucket (e.g. <clusterPrefix>/dr_status_<componentId>.json):", "", o.key != ""); err != nil {
+	if err := askInput(&key, "DR state file object key within the bucket (e.g. <clusterPrefix>/dr_status_<componentId>.json):", key, o.key != ""); err != nil {
 		return err
 	}
 	o.key = key
@@ -137,22 +138,24 @@ func (o *ConfigureOpts) askLocation(c *standby.Credentials) error {
 	return askInput(&c.Endpoint, "Custom S3 endpoint URL (leave empty for AWS S3; set for MinIO and other S3-compatible stores):", c.Endpoint, o.endpoint != "")
 }
 
-// askModeCredentials prompts for the fields required by the chosen auth mode.
 func (o *ConfigureOpts) askModeCredentials(c *standby.Credentials) error {
 	switch c.AuthMode {
 	case standby.AuthModeStaticCredentials:
-		if err := askInput(&c.AccessKeyID, "AWS access key ID:", "", o.accessKey != ""); err != nil {
+		c.RoleArn = ""
+		if err := askInput(&c.AccessKeyID, "AWS access key ID:", c.AccessKeyID, o.accessKey != ""); err != nil {
 			return err
 		}
 		if o.secretKey == "" {
 			return survey.AskOne(&survey.Password{Message: "AWS secret access key:"}, &c.SecretAccessKey)
 		}
 	case standby.AuthModeAssumeRole:
-		if err := askInput(&c.RoleArn, "AWS IAM role ARN to assume:", "", o.roleARN != ""); err != nil {
+		c.AccessKeyID, c.SecretAccessKey = "", ""
+		if err := askInput(&c.RoleArn, "AWS IAM role ARN to assume:", c.RoleArn, o.roleARN != ""); err != nil {
 			return err
 		}
 		return askAWSProfile(c, o.awsProfile != "")
 	case standby.AuthModeCredentialsChain:
+		c.AccessKeyID, c.SecretAccessKey, c.RoleArn = "", "", ""
 		return askAWSProfile(c, o.awsProfile != "")
 	}
 	return nil
@@ -222,9 +225,9 @@ provided as flags or MCLI_* environment variables for scripted setup.`,
     --awsRegion us-east-1 \
     --awsAuthMode staticCredentials \
     --awsAccessKey AKIA... --awsSecretKey ...`,
-		Args: cobra.NoArgs,
+		Args: require.NoArgs,
 		PreRunE: func(cmd *cobra.Command, _ []string) error {
-			o.out = cmd.OutOrStdout()
+			o.OutWriter = cmd.OutOrStdout()
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, _ []string) error {
