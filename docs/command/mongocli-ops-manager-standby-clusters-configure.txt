@@ -1,0 +1,123 @@
+.. _mongocli-ops-manager-standby-clusters-configure:
+
+===============================================
+mongocli ops-manager standby-clusters configure
+===============================================
+
+.. default-domain:: mongodb
+
+.. contents:: On this page
+   :local:
+   :backlinks: none
+   :depth: 1
+   :class: singlecol
+
+Configure access to the disaster recovery state file of your standby cluster.
+
+Guides you through setting up access to the standby cluster disaster
+recovery (DR) state file in Amazon S3: bucket, object key, region, and AWS
+credentials. Supports static AWS access keys, IAM role assumption, and the
+default AWS credentials chain (environment variables, ~/.aws, instance
+profiles, and AWS SSO after 'aws sso login').
+
+The settings are stored in your mongocli profile. All values can also be
+provided as flags or MCLI_* environment variables for scripted setup.
+
+Syntax
+------
+
+.. code-block::
+   :caption: Command Syntax
+
+   mongocli ops-manager standby-clusters configure [options]
+
+.. Code end marker, please don't delete this comment
+
+Options
+-------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 10 10 60
+
+   * - Name
+     - Type
+     - Required
+     - Description
+   * - --awsAccessKey
+     - string
+     - false
+     - AWS Access Key ID that can access the Amazon S3 bucket specified in s3BucketName.
+   * - --awsAuthMode
+     - string
+     - false
+     - AWS authentication mode for standby cluster commands. Valid values are staticCredentials, assumeRole, or credentialsChain.
+   * - --awsProfile
+     - string
+     - false
+     - Named AWS profile from the shared AWS config files to use with the default credentials chain, including AWS SSO profiles after aws sso login.
+   * - --awsRegion
+     - string
+     - false
+     - AWS region of the Amazon S3 bucket that holds the standby cluster DR state file. Defaults to us-east-1; any value works for S3-compatible stores.
+   * - --awsRoleArn
+     - string
+     - false
+     - AWS IAM role ARN to assume for standby cluster commands. Required when awsAuthMode is assumeRole.
+   * - --awsSecretKey
+     - string
+     - false
+     - AWS Secret Access Key that can access the Amazon S3 bucket specified in s3BucketName.
+   * - -h, --help
+     - 
+     - false
+     - help for configure
+   * - --s3BucketEndpoint
+     - string
+     - false
+     - URL of an S3-compatible endpoint. Use only for S3-compatible stores.
+   * - --s3BucketName
+     - string
+     - false
+     - Name of the Amazon S3 bucket that holds the standby cluster DR state file.
+   * - --s3Key
+     - string
+     - false
+     - Object key of the standby cluster DR state file, for example <clusterPrefix>/dr_status_<componentId>.json.
+
+Inherited Options
+-----------------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 10 10 60
+
+   * - Name
+     - Type
+     - Required
+     - Description
+   * - -P, --profile
+     - string
+     - false
+     - Name of the profile to use from your configuration file. To learn about profiles for MongoCLI, see https://dochub.mongodb.org/core/atlas-cli-configuration-file.
+
+Examples
+--------
+
+.. code-block::
+   :copyable: false
+
+   # Configure access to the DR state file interactively:
+   mongocli ops-manager standby-clusters configure
+
+   
+.. code-block::
+   :copyable: false
+
+   # Configure with static AWS credentials, no prompts:
+   mongocli ops-manager standby-clusters configure \
+     --s3BucketName my-dr-bucket \
+     --s3Key my-cluster/dr_status_my-cluster.json \
+     --awsRegion us-east-1 \
+     --awsAuthMode staticCredentials \
+     --awsAccessKey AKIA... --awsSecretKey ...

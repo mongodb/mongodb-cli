@@ -1,0 +1,66 @@
+.. _mongocli-ops-manager-standby-clusters:
+
+=====================================
+mongocli ops-manager standby-clusters
+=====================================
+
+.. default-domain:: mongodb
+
+.. contents:: On this page
+   :local:
+   :backlinks: none
+   :depth: 1
+   :class: singlecol
+
+Manage standby cluster disaster recovery without Ops Manager.
+
+These commands read and write the standby cluster disaster recovery (DR)
+state file directly in Amazon S3. They don't use the Ops Manager API, so they
+remain available when Ops Manager is unreachable.
+
+Run 'mongocli ops-manager standby-clusters configure' first to set up access
+to the DR state file of your standby cluster.
+
+Options
+-------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 10 10 60
+
+   * - Name
+     - Type
+     - Required
+     - Description
+   * - -h, --help
+     - 
+     - false
+     - help for standby-clusters
+
+Inherited Options
+-----------------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 10 10 60
+
+   * - Name
+     - Type
+     - Required
+     - Description
+   * - -P, --profile
+     - string
+     - false
+     - Name of the profile to use from your configuration file. To learn about profiles for MongoCLI, see https://dochub.mongodb.org/core/atlas-cli-configuration-file.
+
+Related Commands
+----------------
+
+* :ref:`mongocli-ops-manager-standby-clusters-configure` - Configure access to the disaster recovery state file of your standby cluster.
+
+
+.. toctree::
+   :titlesonly:
+
+   configure </command/mongocli-ops-manager-standby-clusters-configure>
+

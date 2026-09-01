@@ -125,6 +125,8 @@ const (
 	DisableProxyS3                  = "Flag that indicates whether to use the HTTP proxy when connecting to Amazon S3."
 	S3BucketEndpoint                = "URL that Ops Manager uses to access this Amazon S3 or S3-compatible bucket."
 	S3BucketName                    = "Name of the Amazon S3 bucket that hosts the S3 blockstore."
+	StandbyS3BucketName             = "Name of the Amazon S3 bucket that holds the standby cluster DR state file."
+	StandbyS3Endpoint               = "URL of an S3-compatible endpoint for the standby cluster DR state file. Use only for S3-compatible stores."
 	StandbyS3Key                    = "Object key of the standby cluster DR state file, for example <clusterPrefix>/dr_status_<componentId>.json."
 	StandbyAWSRegion                = "AWS region of the Amazon S3 bucket that holds the standby cluster DR state file. Defaults to us-east-1; any value works for S3-compatible stores."
 	StandbyAWSAuthMode              = "AWS authentication mode for standby cluster commands. Valid values are staticCredentials, assumeRole, or credentialsChain."
