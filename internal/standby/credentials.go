@@ -67,10 +67,10 @@ type Credentials struct {
 //   - credentialsChain: Requires only BucketName, Region (AWS SDK default chain / instance profile)
 func (c Credentials) Validate() error {
 	if c.BucketName == "" {
-		return errors.New("aws.bucketName must be provided")
+		return errors.New("a bucket name must be provided")
 	}
 	if c.Region == "" {
-		return errors.New("aws.region must be provided")
+		return errors.New("a region must be provided")
 	}
 
 	switch c.AuthMode {
@@ -81,39 +81,39 @@ func (c Credentials) Validate() error {
 	case AuthModeCredentialsChain:
 		return c.validateCredentialsChain()
 	default:
-		return fmt.Errorf("aws.authMode must be one of %v, got %s", validAuthModes, c.AuthMode)
+		return fmt.Errorf("auth mode must be one of %v, got %q", validAuthModes, c.AuthMode)
 	}
 }
 
 func (c Credentials) validateAssumeRole() error {
 	if c.RoleArn == "" {
-		return errors.New("aws.roleArn must be provided when aws.authMode is assumeRole")
+		return fmt.Errorf("a role ARN must be provided when auth mode is %s", AuthModeAssumeRole)
 	}
 	if c.AccessKeyID != "" || c.SecretAccessKey != "" || c.SessionToken != "" {
-		return errors.New("aws.accessKeyId, aws.secretAccessKey, and aws.sessionToken must not be provided when aws.authMode is assumeRole")
+		return fmt.Errorf("an access key ID, a secret access key, and a session token must not be provided when auth mode is %s", AuthModeAssumeRole)
 	}
 	return nil
 }
 
 func (c Credentials) validateStaticCredentials() error {
 	if c.AccessKeyID == "" {
-		return errors.New("aws.accessKeyId must be provided when aws.authMode is staticCredentials")
+		return fmt.Errorf("an access key ID must be provided when auth mode is %s", AuthModeStaticCredentials)
 	}
 	if c.SecretAccessKey == "" {
-		return errors.New("aws.secretAccessKey must be provided when aws.authMode is staticCredentials")
+		return fmt.Errorf("a secret access key must be provided when auth mode is %s", AuthModeStaticCredentials)
 	}
 	if c.RoleArn != "" {
-		return errors.New("aws.roleArn must not be provided when aws.authMode is staticCredentials")
+		return fmt.Errorf("a role ARN must not be provided when auth mode is %s", AuthModeStaticCredentials)
 	}
 	if c.SessionToken != "" {
-		return errors.New("aws.sessionToken must not be provided when aws.authMode is staticCredentials")
+		return fmt.Errorf("a session token must not be provided when auth mode is %s", AuthModeStaticCredentials)
 	}
 	return nil
 }
 
 func (c Credentials) validateCredentialsChain() error {
 	if c.RoleArn != "" || c.AccessKeyID != "" || c.SecretAccessKey != "" || c.SessionToken != "" {
-		return errors.New("aws.roleArn, aws.accessKeyId, aws.secretAccessKey, and aws.sessionToken must not be provided when aws.authMode is credentialsChain")
+		return fmt.Errorf("a role ARN, an access key ID, a secret access key, and a session token must not be provided when auth mode is %s", AuthModeCredentialsChain)
 	}
 	return nil
 }
@@ -131,7 +131,7 @@ func newRawS3Client(ctx context.Context, creds Credentials, extraOpts ...func(*s
 	case AuthModeCredentialsChain:
 		return createClientWithDefaultChain(ctx, creds, extraOpts...)
 	default:
-		return nil, fmt.Errorf("invalid aws.authMode: %s, must be one of %v", creds.AuthMode, validAuthModes)
+		return nil, fmt.Errorf("invalid auth mode %q, must be one of %v", creds.AuthMode, validAuthModes)
 	}
 }
 
