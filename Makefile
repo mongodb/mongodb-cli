@@ -49,7 +49,7 @@ devtools:  ## Install dev tools
 	go install github.com/golang/mock/mockgen@latest
 	go install golang.org/x/tools/cmd/goimports@latest
 	go install github.com/google/go-licenses@latest
-	go install mvdan.cc/sh/v3/cmd/shfmt@latest
+	go install mvdan.cc/sh/v3/cmd/shfmt@v3.13.0 # pinned: v3.14.0 requires go >= 1.26
 	go install github.com/icholy/gomajor@latest
 	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(shell go env GOPATH)/bin $(GOLANGCI_VERSION)
 
