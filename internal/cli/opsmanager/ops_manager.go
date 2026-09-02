@@ -37,6 +37,7 @@ import (
 	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/cli/opsmanager/servers"
 	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/cli/opsmanager/serverusage"
 	softwarecompotents "github.com/mongodb/mongodb-cli/mongocli/v2/internal/cli/opsmanager/softwarecomponents"
+	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/cli/opsmanager/standbyclusters"
 	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/cli/opsmanager/versionmanifest"
 	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/config"
 	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/flag"
@@ -60,10 +61,17 @@ func Builder() *cobra.Command {
 
 			config.SetService(config.OpsManagerService)
 			// do not validate to create an owner
-			if cmd.CommandPath() != "mongocli ops-manager owner create" {
-				return validate.Credentials()
+			if cmd.CommandPath() == "mongocli ops-manager owner create" {
+				return nil
 			}
-			return nil
+			// standby-clusters commands work against S3 directly and don't
+			// use the Ops Manager API, so no API keys are needed.
+			for c := cmd; c != nil; c = c.Parent() {
+				if c.Use == standbyclusters.Use {
+					return nil
+				}
+			}
+			return validate.Credentials()
 		},
 		Annotations: map[string]string{
 			"toc": "true",
@@ -93,7 +101,8 @@ func Builder() *cobra.Command {
 		softwarecompotents.Builder(),
 		featurepolicies.Builder(),
 		serverusage.Builder(),
-		livemigrations.Builder())
+		livemigrations.Builder(),
+		standbyclusters.Builder())
 
 	cmd.PersistentFlags().BoolVarP(&debugLevel, flag.Debug, flag.DebugShort, false, usage.Debug)
 	_ = cmd.PersistentFlags().MarkHidden(flag.Debug)

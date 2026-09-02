@@ -71,6 +71,7 @@ Related Commands
 * :ref:`mongocli-ops-manager-serverUsage` - Manage your server usage.
 * :ref:`mongocli-ops-manager-servers` - Manage automated servers for your project.
 * :ref:`mongocli-ops-manager-softwareComponents` - Manage earliest and latest versions of MongoDB Agent, MongoDB Tools, and BI Connector in your environment.
+* :ref:`mongocli-ops-manager-standby-clusters` - Manage standby cluster disaster recovery without Ops Manager.
 * :ref:`mongocli-ops-manager-versionManifest` - Manage Ops Manager version manifest.
 
 
@@ -99,5 +100,6 @@ Related Commands
    serverUsage </command/mongocli-ops-manager-serverUsage>
    servers </command/mongocli-ops-manager-servers>
    softwareComponents </command/mongocli-ops-manager-softwareComponents>
+   standby-clusters </command/mongocli-ops-manager-standby-clusters>
    versionManifest </command/mongocli-ops-manager-versionManifest>
 
