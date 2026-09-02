@@ -52,6 +52,7 @@ to the DR state file of your standby cluster.`,
 	cmd.AddCommand(
 		ConfigureBuilder(),
 		DescribeBuilder(),
+		FailoverBuilder(),
 	)
 
 	return cmd

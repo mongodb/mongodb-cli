@@ -24,6 +24,7 @@ import (
 const (
 	StateStandby        = "Standby"
 	StatePromoteStandby = "PromoteStandby"
+	StateActive         = "Active"
 )
 
 type RemoteDRState struct {
