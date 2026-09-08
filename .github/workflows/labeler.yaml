@@ -10,7 +10,7 @@ jobs:
       pull-requests: write
       issues: write
     steps:
-      - uses: github/issue-labeler@v3.4
+      - uses: github/issue-labeler@v3.5
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
           configuration-path: .github/labeler.yaml
