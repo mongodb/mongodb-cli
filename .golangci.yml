@@ -112,6 +112,11 @@ linters:
       - linters:
           - mnd
         path: internal/test/fixture
+      # Pre-existing package names (log, time, version, pem, metrics) conflict
+      # with stdlib names; renaming them is out of scope for lint-only changes.
+      - linters:
+          - revive
+        text: "var-naming: avoid package names that conflict with Go standard library package names"
     paths:
       - third_party$
       - builtin$
