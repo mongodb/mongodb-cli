@@ -44,6 +44,7 @@ func Default() DecoderValidator {
 type DecoderValidator interface {
 	Decode(filename, password string) (cert, privateKey []byte, err error)
 	ValidateBlocks(filename string) (isEncrypted bool, err error)
+	ValidateCertificateBlocks(filename string) error
 }
 
 var (
@@ -101,6 +102,25 @@ func (p *pemDecoderValidator) Decode(filename, password string) (cert, privateKe
 
 func ValidateBlocks(filename string) (isEncrypted bool, err error) {
 	return defaultPem.ValidateBlocks(filename)
+}
+
+func ValidateCertificateBlocks(filename string) error {
+	return defaultPem.ValidateCertificateBlocks(filename)
+}
+
+// ValidateCertificateBlocks only requires certificate blocks, unlike ValidateBlocks it
+// does not expect a private key. Meant for files that never need one, e.g. a server CA file.
+func (p *pemDecoderValidator) ValidateCertificateBlocks(filename string) error {
+	pemBlocks, err := p.load(filename)
+	if err != nil {
+		return err
+	}
+
+	if _, hasCertBlock := pemBlocks[CertificateBlock]; !hasCertBlock {
+		return errKMIPCertificateBlock
+	}
+
+	return nil
 }
 
 func (p *pemDecoderValidator) ValidateBlocks(filename string) (isEncrypted bool, err error) {

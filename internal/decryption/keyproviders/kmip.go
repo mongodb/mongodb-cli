@@ -156,7 +156,7 @@ func (ki *KMIPKeyIdentifier) validateServerCA() error {
 		}
 	}
 
-	if _, err := pem.ValidateBlocks(ki.ServerCAFileName); err != nil {
+	if err := pem.ValidateCertificateBlocks(ki.ServerCAFileName); err != nil {
 		return fmt.Errorf("server CA %w", err)
 	}
 	return nil
