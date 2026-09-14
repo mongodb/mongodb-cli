@@ -216,18 +216,35 @@ IXbLbUL9NcvLyZnehDa7vPWIoQ==
 -----END ENCRYPTED PRIVATE KEY-----
 `
 
-func TestValidateBlocks(t *testing.T) {
+func TestValidateCertificateBlocks(t *testing.T) {
 	t.Run("CA with private key and cert blocks is valid", func(t *testing.T) {
 		fs := afero.NewMemMapFs()
 		_ = afero.WriteFile(fs, "pemfile", []byte(dummyCA), 0600)
 		pem := &pemDecoderValidator{fs: fs}
 
-		isEncrypted, err := pem.ValidateBlocks("pemfile")
-
-		require.NoError(t, err)
-		assert.False(t, isEncrypted)
+		require.NoError(t, pem.ValidateCertificateBlocks("pemfile"))
 	})
 
+	t.Run("CA without private key block is valid", func(t *testing.T) {
+		fs := afero.NewMemMapFs()
+		certOnly, _, _ := strings.Cut(dummyCA, "-----BEGIN "+string(RSAPrivateKeyBlock)+"-----")
+		_ = afero.WriteFile(fs, "pemfile", []byte(certOnly), 0600)
+		pem := &pemDecoderValidator{fs: fs}
+
+		require.NoError(t, pem.ValidateCertificateBlocks("pemfile"))
+	})
+
+	t.Run("CA without cert block is not valid", func(t *testing.T) {
+		fs := afero.NewMemMapFs()
+		certContent := strings.ReplaceAll(dummyCA, string(CertificateBlock), "DUMMY PEM BLOCK TYPE")
+		_ = afero.WriteFile(fs, "pemfile", []byte(certContent), 0600)
+		pem := &pemDecoderValidator{fs: fs}
+
+		require.Error(t, pem.ValidateCertificateBlocks("pemfile"))
+	})
+}
+
+func TestValidateBlocks(t *testing.T) {
 	t.Run("client cert with private key and cert blocks is valid", func(t *testing.T) {
 		fs := afero.NewMemMapFs()
 		_ = afero.WriteFile(fs, "pemfile", []byte(DummyCert), 0600)
