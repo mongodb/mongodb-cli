@@ -135,7 +135,7 @@ func printStateChange(w io.Writer, s *standby.RemoteDRState) {
 	if t, err := time.Parse(time.RFC3339, s.LastModified); err == nil {
 		ts = t.Local().Format("15:04:05")
 	}
-	_, _ = fmt.Fprintf(w, "%s  %-20s (was %s, version %s)\n", ts, s.State, s.PreviousState, s.Version)
+	_, _ = fmt.Fprintf(w, "%s  %-20s (was %s)\n", ts, s.State, s.PreviousState)
 }
 
 // mongocli ops-manager standby-clusters failover [--force] [--watch].
