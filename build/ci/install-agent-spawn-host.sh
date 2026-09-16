@@ -66,6 +66,12 @@ for host in ${hosts}; do
 	echo "Seeding ${host}"
 	./ego seed "${user}@${host}"
 
+	# the spawn host image bakes in a google-chrome apt repo with an expired
+	# signing key, which makes apt-get update fail during scenario_install_agent
+	echo "Removing stale google-chrome apt repo on ${host}"
+	ssh -i "${keyfile}" -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "${user}@${host}" \
+		"sudo rm -f /etc/apt/sources.list.d/google-chrome.list"
+
 	echo "bin/ego scenario_install_agent"
 	./ego run "${user}@${host}" bin/ego scenario_install_agent "${flags[@]}"
 
