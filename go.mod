@@ -36,7 +36,7 @@ require (
 	github.com/testcontainers/testcontainers-go v0.44.0
 	github.com/testcontainers/testcontainers-go/modules/minio v0.44.0
 	go.mongodb.org/atlas v0.38.0
-	go.mongodb.org/mongo-driver v1.17.9
+	go.mongodb.org/mongo-driver v1.17.10
 	go.mongodb.org/ops-manager v0.63.0
 	golang.org/x/crypto v0.56.0
 	golang.org/x/mod v0.40.0
