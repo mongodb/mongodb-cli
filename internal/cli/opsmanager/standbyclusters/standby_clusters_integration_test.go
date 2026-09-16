@@ -45,7 +45,8 @@ const (
 	minioUser     = "mcli-it"
 	minioPassword = "mcli-it-secret"
 	minioBucket   = "mcli-standby-it"
-	minioImage    = "minio/minio:RELEASE.2025-09-07T16-13-09Z"
+	// minio/minio was removed from Docker Hub in September 2026; pull from quay.io instead.
+	minioImage    = "quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z"
 	awsTestRegion = "us-east-1"
 	testCluster   = "it-cluster"
 )
