@@ -64,6 +64,18 @@ functions:
           set -Eeou pipefail
 
           curl -sL http://boxes.10gen.com/build/curator/curator-dist-rhel70-${curator_release|"latest"}.tar.gz | tar zx
+  "authenticate to ecr":
+    - command: ec2.assume_role
+      params:
+        role_arn: ${ecr_role_arn|arn:aws:iam::901841024863:role/ecr-role-evergreen-ro}
+    - command: subprocess.exec
+      params:
+        <<: *go_options
+        include_expansions_in_env:
+          - AWS_ACCESS_KEY_ID
+          - AWS_SECRET_ACCESS_KEY
+          - AWS_SESSION_TOKEN
+        binary: build/package/ecr-login.sh
   "generate notices":
     - command: subprocess.exec
       type: test
@@ -77,8 +89,6 @@ functions:
         <<: *go_options
         env:
           <<: *go_env
-          ARTIFACTORY_USERNAME: ${artifactory_username}
-          ARTIFACTORY_PASSWORD: ${artifactory_password}
           GRS_USERNAME: ${garasign_username}
           GRS_PASSWORD: ${garasign_password}
         include_expansions_in_env:
@@ -93,6 +103,9 @@ functions:
           - github_app_id
           - github_app_pem
           - unstable
+          - AWS_ACCESS_KEY_ID
+          - AWS_SECRET_ACCESS_KEY
+          - AWS_SESSION_TOKEN
         binary: build/package/package.sh
   "install go-msi":
     - command: subprocess.exec
@@ -120,8 +133,6 @@ functions:
         env:
           <<: *go_env
           SECRET_API_KEY: ${chocolatey_api_key}
-          ARTIFACTORY_USERNAME: ${artifactory_username}
-          ARTIFACTORY_PASSWORD: ${artifactory_password}
           GRS_USERNAME: ${garasign_username}
           GRS_PASSWORD: ${garasign_password}
           unstable: ${unstable}
@@ -269,6 +280,7 @@ tasks:
       - func: "install goreleaser"
       - func: "install macos notarization service"
       - func: "install gh-token"
+      - func: "authenticate to ecr"
       - command: subprocess.exec
         type: test
         params:
@@ -286,9 +298,10 @@ tasks:
         params:
           include_expansions_in_env:
             - unstable
+            - AWS_ACCESS_KEY_ID
+            - AWS_SECRET_ACCESS_KEY
+            - AWS_SESSION_TOKEN
           env:
-            ARTIFACTORY_USERNAME: ${artifactory_username}
-            ARTIFACTORY_PASSWORD: ${artifactory_password}
             GRS_USERNAME: ${garasign_username}
             GRS_PASSWORD: ${garasign_password}
             AUTHENTICODE_KEY_NAME: ${authenticode_key_name}
@@ -299,8 +312,6 @@ tasks:
           unstable: ${unstable}
           goreleaser_config: ${goreleaser_file}
           changelog_file: ${changelog_file}
-          ARTIFACTORY_USERNAME: ${artifactory_username}
-          ARTIFACTORY_PASSWORD: ${artifactory_password}
           GRS_USERNAME: ${garasign_username}
           GRS_PASSWORD: ${garasign_password}
       - func: "rename pkg"
