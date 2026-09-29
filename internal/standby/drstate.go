@@ -28,14 +28,13 @@ const (
 )
 
 type RemoteDRState struct {
-	State         string `json:"state"`
-	PreviousState string `json:"previousState,omitempty"`
-	ClusterName   string `json:"clusterName"`
-	Version       string `json:"version"`
-	LastModified  string `json:"lastModified"`
-	SchemaVersion string `json:"schemaVersion"`
-
-	Planned               bool   `json:"planned,omitempty"`
+	State                 string `json:"state"`
+	PreviousState         string `json:"previousState,omitempty"`
+	ClusterName           string `json:"clusterName,omitempty"`
+	Version               string `json:"version"`
+	LastModified          string `json:"lastModified"`
+	SchemaVersion         string `json:"schemaVersion"`
+	Planned               bool   `json:"planned"`
 	SyncDestination       string `json:"syncDestination,omitempty"`
 	PlannedFailoverTo     string `json:"plannedFailoverTo,omitempty"`
 	CancelPlannedFailover string `json:"cancelPlannedFailover,omitempty"`

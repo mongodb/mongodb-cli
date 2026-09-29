@@ -69,6 +69,10 @@ func TestApplyFailover_ClearsPlanned(t *testing.T) {
 	require.NoError(t, s.ApplyFailover())
 	assert.False(t, s.Planned)
 	assert.Equal(t, "B", s.SyncDestination, "other planned fields must be preserved")
+
+	out, err := s.Marshal()
+	require.NoError(t, err)
+	assert.Contains(t, string(out), `"planned":false`)
 }
 
 func TestIncrementVersion(t *testing.T) {
