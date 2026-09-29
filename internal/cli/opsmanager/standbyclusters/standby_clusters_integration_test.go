@@ -45,8 +45,7 @@ const (
 	minioUser     = "mcli-it"
 	minioPassword = "mcli-it-secret"
 	minioBucket   = "mcli-standby-it"
-	// minio/minio was removed from Docker Hub in September 2026; pull from quay.io instead.
-	minioImage    = "quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z"
+	minioImage    = "bitnamilegacy/minio:2025.7.23"
 	awsTestRegion = "us-east-1"
 	testCluster   = "it-cluster"
 )
@@ -98,6 +97,7 @@ func startMinIO(t *testing.T) (endpoint string, client *s3.Client) {
 	ctr, err := minio.Run(context.Background(), minioImage,
 		minio.WithUsername(minioUser),
 		minio.WithPassword(minioPassword),
+		testcontainers.WithCmd("server", "/bitnami/minio/data"),
 	)
 	require.NoError(t, err)
 	t.Cleanup(func() { _ = testcontainers.TerminateContainer(ctr) })
