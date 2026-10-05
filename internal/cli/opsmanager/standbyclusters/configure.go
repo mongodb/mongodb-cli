@@ -17,18 +17,28 @@ package standbyclusters
 import (
 	"context"
 	"fmt"
+	"os"
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/cli"
 	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/cli/require"
 	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/config"
+	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/flag"
 	"github.com/mongodb/mongodb-cli/mongocli/v2/internal/standby"
 	"github.com/spf13/cobra"
+	"golang.org/x/term"
 )
 
 type ConfigureOpts struct {
 	opts
 	cli.OutputOpts
+
+	// endpointSet and awsProfileSet record whether the flags were passed
+	// explicitly: empty is a valid answer (default S3 endpoint; default
+	// AWS credentials chain), so prompting is decided by Flags().Changed(),
+	// not value-emptiness.
+	endpointSet   bool
+	awsProfileSet bool
 }
 
 func (o *ConfigureOpts) Run(ctx context.Context) error {
@@ -135,7 +145,7 @@ func (o *ConfigureOpts) askLocation(c *standby.Credentials) error {
 	if err := askInput(&c.Region, "AWS region of the bucket:", regionDefault, o.region != ""); err != nil {
 		return err
 	}
-	return askInput(&c.Endpoint, "Custom S3 endpoint URL (leave empty for AWS S3; set for MinIO and other S3-compatible stores):", c.Endpoint, o.endpoint != "")
+	return askInput(&c.Endpoint, "Custom S3 endpoint URL (leave empty for AWS S3; set for MinIO and other S3-compatible stores):", c.Endpoint, o.endpoint != "" || o.endpointSet || !stdinIsTerminal())
 }
 
 func (o *ConfigureOpts) askModeCredentials(c *standby.Credentials) error {
@@ -153,10 +163,10 @@ func (o *ConfigureOpts) askModeCredentials(c *standby.Credentials) error {
 		if err := askInput(&c.RoleArn, "AWS IAM role ARN to assume:", c.RoleArn, o.roleARN != ""); err != nil {
 			return err
 		}
-		return askAWSProfile(c, o.awsProfile != "")
+		return askAWSProfile(c, o.awsProfile != "" || o.awsProfileSet || !stdinIsTerminal())
 	case standby.AuthModeCredentialsChain:
 		c.AccessKeyID, c.SecretAccessKey, c.RoleArn = "", "", ""
-		return askAWSProfile(c, o.awsProfile != "")
+		return askAWSProfile(c, o.awsProfile != "" || o.awsProfileSet || !stdinIsTerminal())
 	}
 	return nil
 }
@@ -201,6 +211,13 @@ func askInput(target *string, message, defaultValue string, skip bool) error {
 	return survey.AskOne(&survey.Input{Message: message, Default: defaultValue}, target)
 }
 
+// stdinIsTerminal reports whether a prompt could be answered. Uses
+// term.IsTerminal (ioctl): /dev/null — go test's stdin — is a character
+// device but not a terminal.
+func stdinIsTerminal() bool {
+	return term.IsTerminal(int(os.Stdin.Fd()))
+}
+
 // mongocli ops-manager standby-clusters configure.
 func ConfigureBuilder() *cobra.Command {
 	o := &ConfigureOpts{}
@@ -228,6 +245,10 @@ provided as flags or MCLI_* environment variables for scripted setup.`,
 		Args: require.NoArgs,
 		PreRunE: func(cmd *cobra.Command, _ []string) error {
 			o.OutWriter = cmd.OutOrStdout()
+			// An explicitly passed empty value is a decision (AWS S3 has no
+			// custom endpoint; an empty profile selects the default chain).
+			o.endpointSet = cmd.Flags().Changed(flag.S3BucketEndpoint)
+			o.awsProfileSet = cmd.Flags().Changed(flag.AWSProfile)
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, _ []string) error {

@@ -144,3 +144,38 @@ func TestConfigureBuilder(t *testing.T) {
 		},
 	)
 }
+
+func TestAskLocation_SkipsOptionalPromptsForAWS(t *testing.T) {
+	// CLOUDP-453824: for AWS S3 the endpoint is empty by design, so the
+	// prompt must be skipped by flag presence, not value-emptiness. The
+	// prompt would otherwise fire (and fail with EOF) in scripts.
+	t.Run("explicitly passed empty endpoint is a decision, not a gap", func(t *testing.T) {
+		o := &ConfigureOpts{opts: opts{bucket: "bucket", key: "k/dr.json", region: "us-east-1"}, endpointSet: true}
+		c := standby.Credentials{BucketName: "bucket", Region: "us-east-1"}
+		require.NoError(t, o.askLocation(&c))
+		assert.Empty(t, c.Endpoint)
+	})
+	t.Run("non-terminal stdin skips the endpoint prompt", func(t *testing.T) {
+		o := &ConfigureOpts{opts: opts{bucket: "bucket", key: "k/dr.json", region: "us-east-1"}}
+		c := standby.Credentials{BucketName: "bucket", Region: "us-east-1"}
+		require.NoError(t, o.askLocation(&c))
+		assert.Empty(t, c.Endpoint)
+	})
+}
+
+func TestAskModeCredentials_SkipsProfilePromptForAWS(t *testing.T) {
+	// Same flaw in askAWSProfile: an empty profile selects the default
+	// chain, so it must not prompt when explicitly passed or non-interactive.
+	t.Run("assumeRole with explicitly empty profile", func(t *testing.T) {
+		o := &ConfigureOpts{opts: opts{roleARN: "arn:aws:iam::123456789012:role/dr"}, awsProfileSet: true}
+		c := standby.Credentials{AuthMode: standby.AuthModeAssumeRole, BucketName: "bucket", Region: defaultAWSRegion, RoleArn: "arn:aws:iam::123456789012:role/dr"}
+		require.NoError(t, o.askModeCredentials(&c))
+		assert.Empty(t, c.AWSProfile)
+	})
+	t.Run("credentialsChain with non-terminal stdin", func(t *testing.T) {
+		o := &ConfigureOpts{opts: opts{}}
+		c := standby.Credentials{AuthMode: standby.AuthModeCredentialsChain, BucketName: "bucket", Region: defaultAWSRegion}
+		require.NoError(t, o.askModeCredentials(&c))
+		assert.Empty(t, c.AWSProfile)
+	})
+}

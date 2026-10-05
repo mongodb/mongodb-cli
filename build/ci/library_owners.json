@@ -39,5 +39,6 @@
 	"golang.org/x/crypto": "mongocli",
 	"golang.org/x/tools": "mongocli",
 	"golang.org/x/mod": "mongocli",
+	"golang.org/x/term": "mongocli",
 	"gopkg.in/yaml.v3": "mongocli"
 }
