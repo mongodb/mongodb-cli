@@ -31,7 +31,7 @@ GITHUB_TOKEN=$(gh-token generate --app-id "$GITHUB_APP_ID" --key ./app.pem --ins
 rm -rf app.pem
 export GITHUB_TOKEN
 
-VERSION_GIT="$(git tag --list "mongocli/v*" --sort=taggerdate | tail -1 | cut -d "v" -f 2)"
+VERSION_GIT="$("$(dirname "${BASH_SOURCE[0]}")/git-version.sh")"
 
 if [[ "${unstable-}" == "-unstable" ]]; then
 	# avoid race conditions on the notarization step by using `-p 1`
