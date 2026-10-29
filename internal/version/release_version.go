@@ -43,7 +43,7 @@ type releaseVersionFetcher struct {
 
 const (
 	owner   = "mongodb"
-	project = "mongodb-atlas-cli"
+	project = "mongodb-cli"
 )
 
 // LatestWithCriteria retrieves the first release version that matches the criteria. We assume that ListReleases returns releases sorted by created_at value.

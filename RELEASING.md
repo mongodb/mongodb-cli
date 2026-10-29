@@ -2,11 +2,10 @@
 
 ## Daily snapshots
 
-We generate a snapshot build via the `goreleaser_snaphot` and `go_msi_snapshot` evergreen tasks,
-these tasks run on master and can be patched at any time.
+We generate a snapshot build via the `goreleaser_snaphot` evergreen task,
+this task runs on master and can be patched at any time.
 
-- **goreleaser_snaphot:** used with `goreleaser` to generate linux, mac and windows builds, the mac build will also be signed and notarized
-- **go_msi_snapshot:** used with `go-msi` to generate a Windows msi installer
+- **goreleaser_snaphot:** used with `goreleaser` to generate linux, mac and windows builds, the mac build will also be signed and notarized, and the windows msi is generated on a Windows host spawned via evergreen's `host.create`
 
 ## Stable release
 
