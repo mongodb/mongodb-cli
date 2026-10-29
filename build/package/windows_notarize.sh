@@ -16,16 +16,9 @@
 
 set -Eeou pipefail
 
-VERSION_GIT="$(git tag --list "mongocli/v*" --sort=taggerdate | tail -1 | cut -d "v" -f 2)"
-VERSION_NAME="$VERSION_GIT"
-if [[ "${unstable-}" == "-unstable" ]]; then
-	VERSION_NAME="$VERSION_GIT-next"
-fi
+EXE_FILE="dist/windows_windows_amd64_v1/bin/mongocli.exe"
 
-EXE_FILE="bin/mongocli.exe"
-MSI_FILE="bin/mongocli_${VERSION_NAME}_windows_x86_64.msi"
-
-if [[ -f "$EXE_FILE" && -f "$MSI_FILE" ]]; then
+if [[ -f "$EXE_FILE" ]]; then
 	"$(dirname "${BASH_SOURCE[0]}")/ecr-login.sh"
 
 	echo "GRS_CONFIG_USER1_USERNAME=${GRS_USERNAME}" > .env
@@ -39,15 +32,6 @@ if [[ -f "$EXE_FILE" && -f "$MSI_FILE" ]]; then
 		-w "$(pwd)" \
 		901841024863.dkr.ecr.us-east-1.amazonaws.com/release-infrastructure/garasign-jsign \
 		/bin/bash -c "jsign --tsaurl http://timestamp.digicert.com -a ${AUTHENTICODE_KEY_NAME} \"$EXE_FILE\""
-	
-	echo "signing $MSI_FILE"
-	podman run \
-		--env-file=.env \
-		--rm \
-		-v "$(pwd):$(pwd)" \
-		-w "$(pwd)" \
-		901841024863.dkr.ecr.us-east-1.amazonaws.com/release-infrastructure/garasign-jsign \
-		/bin/bash -c "jsign --tsaurl http://timestamp.digicert.com -a ${AUTHENTICODE_KEY_NAME} \"$MSI_FILE\""
-	
+
 	rm .env
 fi
