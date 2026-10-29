@@ -20,7 +20,7 @@ if [[ "${unstable-}" == "-unstable" ]]; then
   exit 0
 fi
 
-VERSION="$(git tag --list "mongocli/v*" --sort=taggerdate | tail -1 | cut -d "v" -f 2)"
+VERSION="$("$(dirname "${BASH_SOURCE[0]}")/git-version.sh")"
 
 TOOL_NAME_MESSAGE="MongoDB CLI"
 

@@ -22,7 +22,6 @@ export GITHUB_APP_PEM=${github_app_pem:?}
 export NOTARY_SERVICE_URL=${notary_service_url:?}
 export MACOS_NOTARY_KEY=${notary_service_key_id:?}
 export MACOS_NOTARY_SECRET=${notary_service_secret:?}
-export GORELEASER_KEY=${goreleaser_key:?}
 export VERSION_GIT
 
 echo "$GITHUB_APP_PEM" > app.pem
@@ -31,14 +30,14 @@ GITHUB_TOKEN=$(gh-token generate --app-id "$GITHUB_APP_ID" --key ./app.pem --ins
 rm -rf app.pem
 export GITHUB_TOKEN
 
-VERSION_GIT="$(git tag --list "mongocli/v*" --sort=taggerdate | tail -1 | cut -d "v" -f 2)"
+VERSION_GIT="$("$(dirname "${BASH_SOURCE[0]}")/git-version.sh")"
 
 if [[ "${unstable-}" == "-unstable" ]]; then
 	# avoid race conditions on the notarization step by using `-p 1`
-	./bin/goreleaser --config "${goreleaser_config:?}" --rm-dist --release-notes "${changelog_file:?}" -p 1 --snapshot
+	./bin/goreleaser --config "${goreleaser_config:?}" --clean --release-notes "${changelog_file:?}" -p 1 --snapshot
 else
 	# avoid race conditions on the notarization step by using `-p 1`
-	./bin/goreleaser --config "${goreleaser_config:?}" --rm-dist --release-notes "${changelog_file:?}" -p 1
+	./bin/goreleaser --config "${goreleaser_config:?}" --clean --release-notes "${changelog_file:?}" -p 1
 fi
 
 gh-token revoke -t "$GITHUB_TOKEN"

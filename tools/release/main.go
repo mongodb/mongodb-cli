@@ -111,7 +111,7 @@ func generateFile(name, version string) error {
 		ReleaseDate:          time.Now().UTC(),
 		Version:              version,
 		ManualLink:           manualLink,
-		PreviousReleasesLink: "https://github.com/mongodb/mongodb-cli/mongocli/v2/releases",
+		PreviousReleasesLink: "https://github.com/mongodb/mongodb-cli/releases",
 		ReleaseNotesLink:     releaseNotesLink,
 		TutorialLink:         tutorialLink,
 		Platform: []Platform{
