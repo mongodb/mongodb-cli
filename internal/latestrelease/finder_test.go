@@ -124,9 +124,21 @@ func TestOutputOpts_testIsValidTag(t *testing.T) {
 		tag     string
 		isValid bool
 	}{
-		{"atlascli/v1.0.0", false},
+		// Legacy format.
 		{"mongocli/v1.0.0", true},
+		{"mongocli/v2.0.9", true},
+		{"mongocli/v1.0.0-rc0", true},
+		// New bare format.
 		{"v1.0.0", true},
+		{"v2.3.4", true},
+		// Other tools' tags. atlascli tags exist in this repo from before it
+		// was renamed to mongodb-atlas-cli, so they must never match.
+		{"atlascli/v1.0.0", false},
+		{"atlascli/v1.59.0", false},
+		// Tags that do not carry a version.
+		{"nightly", false},
+		{"mongocli/nightly", false},
+		{"2024", false},
 	}
 
 	for _, tt := range tests {
