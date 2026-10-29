@@ -19,7 +19,7 @@ keyfile="${keyfile:-./build/ci/ssh_id}"
 user="${user:-Administrator}"
 hostsfile="${hostsfile:-./build/ci/hosts.json}"
 
-VERSION_GIT="$(git tag --list "mongocli/v*" --sort=taggerdate | tail -1 | cut -d "v" -f 2)"
+VERSION_GIT="$("$(dirname "${BASH_SOURCE[0]}")/git-version.sh")"
 VERSION_NAME="$VERSION_GIT"
 if [[ "${unstable-}" == "-unstable" ]]; then
 	VERSION_NAME="$VERSION_GIT-next"

@@ -37,13 +37,13 @@ version_from_tag() {
 
 case "${1:-version}" in
 	tag)
-		git tag --list "${tag_patterns[@]}" --sort=-taggerdate | head -1
+		git tag --list "${tag_patterns[@]}" --sort=-creatordate | head -1
 		;;
 	describe)
 		git describe --match 'mongocli/v*' --match 'v*' | version_from_tag
 		;;
 	version)
-		git tag --list "${tag_patterns[@]}" --sort=-taggerdate | head -1 | version_from_tag
+		git tag --list "${tag_patterns[@]}" --sort=-creatordate | head -1 | version_from_tag
 		;;
 	*)
 		echo "usage: $(basename "$0") [version|tag|describe]" >&2
