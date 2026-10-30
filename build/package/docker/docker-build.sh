@@ -16,7 +16,7 @@
 
 set -Eeou pipefail
 
-VERSION="$("$(dirname "${BASH_SOURCE[0]}")/git-version.sh")"
+VERSION="$("$(dirname "${BASH_SOURCE[0]}")/../git-version.sh")"
 
 FILE_EXT=deb
 if [[ "${image-}" =~ "rpm" ]]; then
