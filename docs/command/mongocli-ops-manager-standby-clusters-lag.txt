@@ -1,0 +1,130 @@
+.. _mongocli-ops-manager-standby-clusters-lag:
+
+=========================================
+mongocli ops-manager standby-clusters lag
+=========================================
+
+.. default-domain:: mongodb
+
+.. contents:: On this page
+   :local:
+   :backlinks: none
+   :depth: 1
+   :class: singlecol
+
+Report the replication lag of your standby cluster without Ops Manager.
+
+Reads the Cluster Status Object (cluster_status_v1.bson) directly from the
+object store and reports the standby replication lag. It doesn't use the Ops
+Manager API, so it remains available when Ops Manager is unreachable.
+
+The plaintext output always shows the same labeled lines, whatever the object
+supports; only the values change (a number, short words, or NA):
+
+  estimated data loss: the operations the active cluster committed since the
+  standby's last safe point but that have not yet been shipped. They would be
+  lost in an unplanned failover. It is real elapsed time measured since the
+  safe point. It reads NA until the standby has initialized replication.
+
+  With '--shards', each shard line reports the oplog the shard has received but
+  not yet applied, as published by the agent. This is the drain work that
+  promotion must complete before the shard can take over. A shard whose value
+  the agent has not published yet reads NA.
+
+  standby lag = estimated data loss + pending apply — how far behind the
+  standby is: the newest op it has applied was originally committed that many
+  seconds ago on the source. It reads "not available yet" when the boundaries
+  are missing or out of order, and NA when the standby is uninitialized.
+
+Use '-o json' for the full cluster status document. With '-o json', '--shards'
+has no additional effect because shardStatus is already part of the document.
+
+Run 'mongocli ops-manager standby-clusters configure' first to set up access
+to the DR state file of your standby cluster.
+
+Syntax
+------
+
+.. code-block::
+   :caption: Command Syntax
+
+   mongocli ops-manager standby-clusters lag [options]
+
+.. Code end marker, please don't delete this comment
+
+Options
+-------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 10 10 60
+
+   * - Name
+     - Type
+     - Required
+     - Description
+   * - --awsAccessKey
+     - string
+     - false
+     - AWS Access Key ID that can access the Amazon S3 bucket specified in s3BucketName.
+   * - --awsAuthMode
+     - string
+     - false
+     - AWS authentication mode for standby cluster commands. Valid values are staticCredentials, assumeRole, or credentialsChain.
+   * - --awsProfile
+     - string
+     - false
+     - Named AWS profile from the shared AWS config files to use with the default credentials chain, including AWS SSO profiles after aws sso login.
+   * - --awsRegion
+     - string
+     - false
+     - AWS region of the Amazon S3 bucket that holds the standby cluster DR state file. Defaults to us-east-1; any value works for S3-compatible stores.
+   * - --awsRoleArn
+     - string
+     - false
+     - AWS IAM role ARN to assume for standby cluster commands. Required when awsAuthMode is assumeRole.
+   * - --awsSecretKey
+     - string
+     - false
+     - AWS Secret Access Key that can access the Amazon S3 bucket specified in s3BucketName.
+   * - -h, --help
+     - 
+     - false
+     - help for lag
+   * - -o, --output
+     - string
+     - false
+     - Output format. Valid values are json — or leave unset for the labeled summary.
+   * - --s3BucketEndpoint
+     - string
+     - false
+     - URL of an S3-compatible endpoint for the standby cluster DR state file. Use only for S3-compatible stores.
+   * - --s3BucketName
+     - string
+     - false
+     - Name of the Amazon S3 bucket that holds the standby cluster DR state file.
+   * - --s3Key
+     - string
+     - false
+     - Object key of the standby cluster DR state file, for example <clusterPrefix>/dr_status_<componentId>.json.
+   * - --shards
+     - 
+     - false
+     - Also report the replication lag of each individual shard.
+
+Inherited Options
+-----------------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 10 10 60
+
+   * - Name
+     - Type
+     - Required
+     - Description
+   * - -P, --profile
+     - string
+     - false
+     - Name of the profile to use from your configuration file. To learn about profiles for MongoCLI, see https://dochub.mongodb.org/core/atlas-cli-configuration-file.
+
