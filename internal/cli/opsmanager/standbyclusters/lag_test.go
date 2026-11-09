@@ -270,7 +270,7 @@ func TestLag_RunJSON(t *testing.T) {
 
 	var out bytes.Buffer
 	o := lagTestOpts(mockStore, &out)
-	o.Output = "json"
+	o.Output = jsonOutputFormat
 	require.NoError(t, o.Run(context.Background()))
 
 	var got struct {
@@ -297,14 +297,14 @@ func TestLag_RunJSON(t *testing.T) {
 
 	assert.Equal(t, uint32(1), got.SchemaVersion)
 	require.NotNil(t, got.ClusterStatus.EstimatedDataLossSeconds)
-	assert.Equal(t, 40.0, *got.ClusterStatus.EstimatedDataLossSeconds)
+	assert.InEpsilon(t, 40.0, *got.ClusterStatus.EstimatedDataLossSeconds, 0.0001)
 	assert.Equal(t, uint32(1793875780), got.ClusterStatus.EarliestSafeTimestamp.Seconds)
 	assert.Equal(t, uint32(1), got.ClusterStatus.EarliestSafeTimestamp.Increment)
 	assert.Equal(t, uint32(1793875770), got.ClusterStatus.MinCommittedOpTimestamp.Seconds)
 	require.Len(t, got.ShardStatus, 1)
 	assert.Equal(t, "rs0", got.ShardStatus[0].ShardID)
 	require.NotNil(t, got.ShardStatus[0].LagSeconds)
-	assert.Equal(t, 30.0, *got.ShardStatus[0].LagSeconds)
+	assert.InEpsilon(t, 30.0, *got.ShardStatus[0].LagSeconds, 0.0001)
 
 	// The standby lag total is a plaintext-only line; the JSON document is the
 	// wire contract and must not carry it.
@@ -320,12 +320,12 @@ func TestLag_RunJSONShardsFlagNoEffect(t *testing.T) {
 
 	var withShards, withoutShards bytes.Buffer
 	o := lagTestOpts(mockStore, &withShards)
-	o.Output = "json"
+	o.Output = jsonOutputFormat
 	o.shards = true
 	require.NoError(t, o.Run(context.Background()))
 
 	o2 := lagTestOpts(mockStore, &withoutShards)
-	o2.Output = "json"
+	o2.Output = jsonOutputFormat
 	require.NoError(t, o2.Run(context.Background()))
 
 	assert.Equal(t, withoutShards.String(), withShards.String())
@@ -340,7 +340,7 @@ func TestLag_RunJSONUninitialized(t *testing.T) {
 
 	var out bytes.Buffer
 	o := lagTestOpts(mockStore, &out)
-	o.Output = "json"
+	o.Output = jsonOutputFormat
 	require.NoError(t, o.Run(context.Background()))
 
 	var got map[string]any
@@ -374,21 +374,21 @@ func TestLag_RunUnsupportedOutputFormat(t *testing.T) {
 		o.Output = format
 		err := o.Run(context.Background())
 		require.Error(t, err)
-		assert.EqualError(t, err, fmt.Sprintf("unsupported output format %q for this command; supported values: json", format))
+		require.EqualError(t, err, fmt.Sprintf("unsupported output format %q for this command; supported values: json", format))
 		assert.Empty(t, out.String())
 	}
 }
 
 func TestLagBuilder_OutputCompletion(t *testing.T) {
 	values, directive := completeLagOutput(nil, nil, "")
-	assert.Equal(t, []string{"json"}, values)
+	assert.Equal(t, []string{jsonOutputFormat}, values)
 	assert.Equal(t, cobra.ShellCompDirectiveNoFileComp, directive)
 }
 
 // When -o is unset, lag falls back to the global 'output' config setting, the
 // same way the other OutputOpts commands do.
 func TestLag_RunGlobalOutputConfigJSON(t *testing.T) {
-	setGlobalOutput(t, "json")
+	setGlobalOutput(t, jsonOutputFormat)
 
 	ctrl := gomock.NewController(t)
 	mockStore := mocks.NewMockStateStore(ctrl)
@@ -407,7 +407,7 @@ func TestLag_RunGlobalOutputConfigJSON(t *testing.T) {
 // The global 'output' config plus --shards: JSON wins (shardStatus is already
 // part of the document), so the flag must be a no-op, not add plaintext lines.
 func TestLag_RunGlobalOutputConfigJSONWithShards(t *testing.T) {
-	setGlobalOutput(t, "json")
+	setGlobalOutput(t, jsonOutputFormat)
 
 	ctrl := gomock.NewController(t)
 	mockStore := mocks.NewMockStateStore(ctrl)
@@ -440,7 +440,7 @@ func TestLag_RunGlobalOutputConfigUnsupported(t *testing.T) {
 			var out bytes.Buffer
 			err := lagTestOpts(mockStore, &out).Run(context.Background())
 			require.Error(t, err)
-			assert.EqualError(t, err, fmt.Sprintf("unsupported output format %q for this command; supported values: json", format))
+			require.EqualError(t, err, fmt.Sprintf("unsupported output format %q for this command; supported values: json", format))
 			assert.Empty(t, out.String())
 		})
 	}
@@ -471,7 +471,7 @@ func TestLag_RunFlagOutputWinsOverGlobalConfig(t *testing.T) {
 
 	var out bytes.Buffer
 	o := lagTestOpts(mockStore, &out)
-	o.Output = "json"
+	o.Output = jsonOutputFormat
 	require.NoError(t, o.Run(context.Background()))
 
 	var got map[string]any

@@ -33,16 +33,16 @@ var testClusterStatusFixture []byte
 // LoadTestClusterStatusBytes returns the raw cluster_status_v1 BSON fixture bytes
 // (estimatedDataLossSeconds 40, one shard rs0 with lagSeconds 30). Tests that seed
 // the fixture into blob storage use this to keep the published bytes verbatim.
-func LoadTestClusterStatusBytes(t testing.TB) []byte {
-	t.Helper()
+func LoadTestClusterStatusBytes(tb testing.TB) []byte {
+	tb.Helper()
 	return bytes.Clone(testClusterStatusFixture)
 }
 
 // LoadTestClusterStatus returns the shared cluster_status_v1 BSON fixture decoded
 // into a ClusterStatus.
-func LoadTestClusterStatus(t testing.TB) *ClusterStatus {
-	t.Helper()
+func LoadTestClusterStatus(tb testing.TB) *ClusterStatus {
+	tb.Helper()
 	status, err := UnmarshalClusterStatus(testClusterStatusFixture)
-	require.NoError(t, err)
+	require.NoError(tb, err)
 	return status
 }

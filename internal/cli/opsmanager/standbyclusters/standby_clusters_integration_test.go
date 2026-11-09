@@ -286,11 +286,11 @@ func TestLagIntegration(t *testing.T) {
 		}
 		require.NoError(t, json.Unmarshal([]byte(stdout), &got), "output was: %s", stdout)
 		require.NotNil(t, got.ClusterStatus.EstimatedDataLossSeconds)
-		assert.Equal(t, 40.0, *got.ClusterStatus.EstimatedDataLossSeconds)
+		assert.InEpsilon(t, 40.0, *got.ClusterStatus.EstimatedDataLossSeconds, 0.0001)
 		require.Len(t, got.ShardStatus, 1)
 		assert.Equal(t, "rs0", got.ShardStatus[0].ShardID)
 		require.NotNil(t, got.ShardStatus[0].LagSeconds)
-		assert.Equal(t, 30.0, *got.ShardStatus[0].LagSeconds)
+		assert.InEpsilon(t, 30.0, *got.ShardStatus[0].LagSeconds, 0.0001)
 	})
 }
 

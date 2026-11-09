@@ -103,6 +103,7 @@ func TestFetchClusterStatus_DecodeFixture(t *testing.T) {
 const (
 	testS3Bucket = "standby-unit-bucket"
 	testS3Region = "us-east-1"
+	testS3DRKey  = "cluster-A/dr_status_rs0.json"
 )
 
 // fakeS3 is a minimal path-style S3 endpoint. Requests arrive as
@@ -187,7 +188,7 @@ func TestS3StateStore_FetchClusterStatus(t *testing.T) {
 	fixture, err := os.ReadFile("testdata/cluster_status_v1.bson")
 	require.NoError(t, err)
 
-	drKey := "cluster-A/dr_status_rs0.json"
+	drKey := testS3DRKey
 	statusKey, err := ClusterStatusKey(drKey)
 	require.NoError(t, err)
 	require.Equal(t, "cluster-A/cluster_status_v1.bson", statusKey)
@@ -201,11 +202,11 @@ func TestS3StateStore_FetchClusterStatus(t *testing.T) {
 		require.NotNil(t, status)
 		assert.Equal(t, uint32(1), status.SchemaVersion)
 		require.NotNil(t, status.ClusterStatus.EstimatedDataLossSeconds)
-		assert.Equal(t, 40.0, *status.ClusterStatus.EstimatedDataLossSeconds)
+		assert.InEpsilon(t, 40.0, *status.ClusterStatus.EstimatedDataLossSeconds, 0.0001)
 		require.Len(t, status.ShardStatus, 1)
 		assert.Equal(t, "rs0", status.ShardStatus[0].ShardID)
 		require.NotNil(t, status.ShardStatus[0].LagSeconds)
-		assert.Equal(t, 30.0, *status.ShardStatus[0].LagSeconds)
+		assert.InEpsilon(t, 30.0, *status.ShardStatus[0].LagSeconds, 0.0001)
 	})
 
 	t.Run("missing object reports not found", func(t *testing.T) {
@@ -251,7 +252,7 @@ func TestS3StateStore_FetchClusterStatus(t *testing.T) {
 }
 
 func TestS3StateStore_FetchDRState(t *testing.T) {
-	drKey := "cluster-A/dr_status_rs0.json"
+	drKey := testS3DRKey
 	drJSON := []byte(
 		`{"state":"Standby","clusterName":"cluster-A","version":"1",` +
 			`"lastModified":"2026-08-19T12:25:23Z","schemaVersion":"1"}`,

@@ -39,13 +39,13 @@ func TestUnmarshalClusterStatus_Fixture(t *testing.T) {
 	assert.Equal(t, Timestamp{T: 1793875780, I: 1}, status.ClusterStatus.EarliestSafeTimestamp)
 	assert.Equal(t, Timestamp{T: 1793875770, I: 1}, status.ClusterStatus.MinCommittedOpTimestamp)
 	require.NotNil(t, status.ClusterStatus.EstimatedDataLossSeconds)
-	assert.Equal(t, 40.0, *status.ClusterStatus.EstimatedDataLossSeconds)
+	assert.InEpsilon(t, 40.0, *status.ClusterStatus.EstimatedDataLossSeconds, 0.0001)
 
 	require.Len(t, status.ShardStatus, 1)
 	shard := status.ShardStatus[0]
 	assert.Equal(t, "rs0", shard.ShardID)
 	require.NotNil(t, shard.LagSeconds)
-	assert.Equal(t, 30.0, *shard.LagSeconds)
+	assert.InEpsilon(t, 30.0, *shard.LagSeconds, 0.0001)
 	assert.Equal(t, Timestamp{T: 1793875770, I: 1}, shard.CommittedOptime)
 }
 
@@ -125,7 +125,7 @@ func TestClusterStatus_JSONRoundTrip(t *testing.T) {
 	assert.Equal(t, status.ClusterStatus.MinCommittedOpTimestamp, decoded.ClusterStatus.MinCommittedOpTimestamp)
 	require.NotNil(t, decoded.ClusterStatus.EstimatedDataLossSeconds)
 	require.NotNil(t, status.ClusterStatus.EstimatedDataLossSeconds)
-	assert.Equal(t, *status.ClusterStatus.EstimatedDataLossSeconds, *decoded.ClusterStatus.EstimatedDataLossSeconds)
+	assert.InEpsilon(t, *status.ClusterStatus.EstimatedDataLossSeconds, *decoded.ClusterStatus.EstimatedDataLossSeconds, 0.0001)
 	require.Len(t, decoded.ShardStatus, 1)
 	assert.Equal(t, status.ShardStatus[0].ShardID, decoded.ShardStatus[0].ShardID)
 	assert.Equal(t, status.ShardStatus[0].CommittedOptime, decoded.ShardStatus[0].CommittedOptime)
