@@ -37,8 +37,13 @@ var ErrObjectDoesNotExist = errors.New("object does not exist")
 
 type StateStore interface {
 	// FetchDRState retrieves the DR status file. Returns the parsed state and
-	// the ETag for use in conditional writes, or (nil, "", nil) if absent.
+	// the ETag for use in conditional writes, or (nil, "", nil) if absent (404).
+	// A 403 is ambiguous (the object may be absent or access may be denied) and
+	// is returned as an error carrying both possibilities.
 	FetchDRState(ctx context.Context) (*RemoteDRState, string, error)
+	// FetchClusterStatus retrieves the cluster status object published next to
+	// the DR status file. Returns an error if the object is absent.
+	FetchClusterStatus(ctx context.Context) (*ClusterStatus, error)
 	// ConditionalPutDRState writes the DR status file guarded by If-Match on
 	// the expected ETag. Returns ErrPreconditionFailed on a lost race.
 	ConditionalPutDRState(ctx context.Context, newState *RemoteDRState, expectedETag string) error
@@ -62,15 +67,28 @@ func NewS3StateStore(ctx context.Context, creds Credentials, key string) (*S3Sta
 
 // FetchDRState retrieves the DR status file from blob storage.
 // Returns the parsed state and the ETag for use in conditional writes.
-// Returns (nil, "", nil) if the object does not exist.
+// Returns (nil, "", nil) if the object does not exist (404). A 403 is treated
+// as an error (see the case below) because it cannot be distinguished from a
+// missing object without s3:ListBucket.
 func (s *S3StateStore) FetchDRState(ctx context.Context) (*RemoteDRState, string, error) {
 	result, err := s.client.GetObject(ctx, &s3.GetObjectInput{
 		Bucket: &s.bucket,
 		Key:    &s.key,
 	})
 	if err != nil {
-		if s3StatusCode(err) == http.StatusNotFound {
-			return nil, "", nil
+		// A 403 is deliberately surfaced as an error rather than the 404
+		// (nil, "", nil) contract: (nil, "", nil) means "definitely absent", and
+		// collapsing 403 into it would make every caller claim the file is gone —
+		// e.g. the failover watcher would report "the DR state file ... no longer
+		// exists" for a file that may still exist but be denied.
+		// classifyGetObjectError keeps the original cause and the auth hint.
+		// TriggerFailover aborts either way, so the failover flow is no less safe.
+		forbidden := fmt.Sprintf(
+			"DR state file not found at %s (or the credentials lack access to it): check your standby-clusters configuration; also verify the credentials' S3 access",
+			s.FullPath(),
+		)
+		if handled, out := classifyGetObjectError(err, "", forbidden); handled {
+			return nil, "", out
 		}
 		return nil, "", fmt.Errorf("error fetching DR state from %s: %w", s.FullPath(), withAuthHint(err))
 	}
@@ -172,4 +190,34 @@ func s3StatusCode(err error) int {
 		return -1
 	}
 	return respErr.HTTPStatusCode()
+}
+
+// classifyGetObjectError centralizes the S3 GetObject error handling shared by
+// FetchDRState and FetchClusterStatus. S3 answers a GetObject for an absent key
+// with 404 NoSuchKey when the caller may list the bucket, but with 403
+// AccessDenied when it may not — so a 403 is ambiguous: the object may be absent
+// or merely denied.
+//
+// It returns handled=true for the 404 and 403 cases:
+//   - 404: notFound is returned verbatim. An empty notFound means "absent is not
+//     an error" and yields a nil error (the DR state file's (nil, "", nil)
+//     contract).
+//   - 403: the caller's forbidden prose is kept, with the original cause wrapped
+//     (%w) and the auth hint re-applied, so a real credential failure keeps both
+//     its cause and the SSO/credentials guidance.
+//
+// handled=false means the error is neither 404 nor 403, and the caller applies
+// its own generic wrapping.
+func classifyGetObjectError(err error, notFound, forbidden string) (handled bool, out error) {
+	switch s3StatusCode(err) {
+	case http.StatusNotFound:
+		if notFound == "" {
+			return true, nil
+		}
+		return true, errors.New(notFound)
+	case http.StatusForbidden:
+		return true, fmt.Errorf("%s: %w", forbidden, withAuthHint(err))
+	default:
+		return false, nil
+	}
 }

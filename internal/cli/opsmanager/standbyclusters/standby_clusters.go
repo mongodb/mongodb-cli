@@ -53,6 +53,7 @@ to the DR state file of your standby cluster.`,
 		ConfigureBuilder(),
 		DescribeBuilder(),
 		FailoverBuilder(),
+		LagBuilder(),
 	)
 
 	return cmd

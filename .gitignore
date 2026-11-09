@@ -39,3 +39,4 @@ sbom.json
 *.idea
 *.vscode
 
+*.iml

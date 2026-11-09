@@ -49,6 +49,21 @@ func (mr *MockStateStoreMockRecorder) ConditionalPutDRState(arg0, arg1, arg2 int
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ConditionalPutDRState", reflect.TypeOf((*MockStateStore)(nil).ConditionalPutDRState), arg0, arg1, arg2)
 }
 
+// FetchClusterStatus mocks base method.
+func (m *MockStateStore) FetchClusterStatus(arg0 context.Context) (*standby.ClusterStatus, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FetchClusterStatus", arg0)
+	ret0, _ := ret[0].(*standby.ClusterStatus)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FetchClusterStatus indicates an expected call of FetchClusterStatus.
+func (mr *MockStateStoreMockRecorder) FetchClusterStatus(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FetchClusterStatus", reflect.TypeOf((*MockStateStore)(nil).FetchClusterStatus), arg0)
+}
+
 // FetchDRState mocks base method.
 func (m *MockStateStore) FetchDRState(arg0 context.Context) (*standby.RemoteDRState, string, error) {
 	m.ctrl.T.Helper()
