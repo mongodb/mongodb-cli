@@ -133,6 +133,7 @@ const (
 	StandbyAWSRoleARN               = "AWS IAM role ARN to assume for standby cluster commands. Required when awsAuthMode is assumeRole."
 	StandbyAWSProfile               = "Named AWS profile from the shared AWS config files to use with the default credentials chain, including AWS SSO profiles after aws sso login."
 	StandbyWatch                    = "Flag that indicates whether to watch the DR state file until the failover completes."
+	StandbyShards                   = "Also report the replication lag of each individual shard."
 	S3MaxConnections                = "Positive integer that indicates the maximum number of connections to this Amazon S3 blockstore."
 	AcceptedTos                     = "Flag that indicates whether you accepted the terms of service for using Amazon S3-compatible stores with Ops Manager."
 	SSEEnabled                      = "Flag that indicates whether the Amazon S3 blockstore enables server-side encryption."

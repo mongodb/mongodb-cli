@@ -162,6 +162,7 @@ const (
 	AWSProfile                      = "awsProfile"                      // AWSProfile flag
 	Watch                           = "watch"                           // Watch flag
 	WatchShort                      = "w"                               // WatchShort flag
+	Shards                          = "shards"                          // Shards flag
 	S3MaxConnections                = "s3MaxConnections"                // S3MaxConnections flag
 	DisableProxyS3                  = "disableProxyS3"                  // DisableProxyS3 flag
 	AcceptedTos                     = "acceptedTos"                     // AcceptedTos flag

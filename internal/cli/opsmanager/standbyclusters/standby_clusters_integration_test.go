@@ -123,7 +123,14 @@ func seedState(t *testing.T, client *s3.Client, key string, state standby.Remote
 	t.Helper()
 	body, err := json.Marshal(state)
 	require.NoError(t, err)
-	_, err = client.PutObject(context.Background(), &s3.PutObjectInput{
+	seedObject(t, client, key, body)
+}
+
+// seedObject writes raw object bytes to the test bucket (e.g. the
+// cluster_status_v1 BSON the agent publishes).
+func seedObject(t *testing.T, client *s3.Client, key string, body []byte) {
+	t.Helper()
+	_, err := client.PutObject(context.Background(), &s3.PutObjectInput{
 		Bucket: aws.String(minioBucket),
 		Key:    aws.String(key),
 		Body:   bytes.NewReader(body),
@@ -233,4 +240,76 @@ func TestDescribeBadCredentials(t *testing.T) {
 		append(endpointFlags(endpoint), "--s3Key", key, "--awsSecretKey", "wrong")...)
 	_, _, err := runCLI(t, home, flags...)
 	require.Error(t, err)
+}
+
+func TestLagIntegration(t *testing.T) {
+	endpoint, client := startMinIO(t)
+	home := t.TempDir()
+
+	prefix := "it/lag"
+	drKey := prefix + "/dr_status_rs0.json"
+	// The DR file makes configure's smoke test pass; the cluster status object
+	// is the sibling the lag command reads.
+	seedState(t, client, drKey, standbyDoc())
+	seedObject(t, client, prefix+"/cluster_status_v1.bson", standby.LoadTestClusterStatusBytes(t))
+
+	// Configure once: it persists the profile that the flagless lag calls read.
+	args := append([]string{"standby-clusters", "configure"}, append(endpointFlags(endpoint), "--s3Key", drKey)...)
+	_, stderr, err := runCLI(t, home, args...)
+	require.NoError(t, err, "stderr: %s", stderr)
+
+	t.Run("reports the cluster lag", func(t *testing.T) {
+		stdout, stderr, err := runCLI(t, home, "standby-clusters", "lag")
+		require.NoError(t, err, "stderr: %s", stderr)
+		assert.Equal(t, "estimated data loss: 40s\nstandby lag: 50s\n", stdout)
+	})
+
+	t.Run("--shards reports the per-shard lag", func(t *testing.T) {
+		stdout, stderr, err := runCLI(t, home, "standby-clusters", "lag", "--shards")
+		require.NoError(t, err, "stderr: %s", stderr)
+		// The shard value is the published lagSeconds (30 in the fixture), relayed verbatim.
+		assert.Equal(t, "estimated data loss: 40s\nrs0: 30s of oplog pending apply\nstandby lag: 50s\n", stdout)
+	})
+
+	t.Run("-o json reports the full cluster status object", func(t *testing.T) {
+		stdout, stderr, err := runCLI(t, home, "standby-clusters", "lag", "-o", "json")
+		require.NoError(t, err, "stderr: %s", stderr)
+
+		var got struct {
+			ClusterStatus struct {
+				EstimatedDataLossSeconds *float64 `json:"estimatedDataLossSeconds"`
+			} `json:"clusterStatus"`
+			ShardStatus []struct {
+				ShardID    string   `json:"shardId"`
+				LagSeconds *float64 `json:"lagSeconds"`
+			} `json:"shardStatus"`
+		}
+		require.NoError(t, json.Unmarshal([]byte(stdout), &got), "output was: %s", stdout)
+		require.NotNil(t, got.ClusterStatus.EstimatedDataLossSeconds)
+		assert.InEpsilon(t, 40.0, *got.ClusterStatus.EstimatedDataLossSeconds, 0.0001)
+		require.Len(t, got.ShardStatus, 1)
+		assert.Equal(t, "rs0", got.ShardStatus[0].ShardID)
+		require.NotNil(t, got.ShardStatus[0].LagSeconds)
+		assert.InEpsilon(t, 30.0, *got.ShardStatus[0].LagSeconds, 0.0001)
+	})
+}
+
+// The agent has published the DR state file but not yet the cluster status
+// object: lag must fail with the pointer to the publishing build.
+func TestLagIntegrationMissingStatusObject(t *testing.T) {
+	endpoint, client := startMinIO(t)
+	home := t.TempDir()
+
+	prefix := "it/lag-missing"
+	drKey := prefix + "/dr_status_rs0.json"
+	seedState(t, client, drKey, standbyDoc())
+
+	args := append([]string{"standby-clusters", "configure"}, append(endpointFlags(endpoint), "--s3Key", drKey)...)
+	_, stderr, err := runCLI(t, home, args...)
+	require.NoError(t, err, "stderr: %s", stderr)
+
+	_, stderr, err = runCLI(t, home, "standby-clusters", "lag")
+	require.Error(t, err)
+	assert.Contains(t, stderr, "cluster status object not found")
+	assert.Contains(t, stderr, "running a build that publishes cluster status")
 }
