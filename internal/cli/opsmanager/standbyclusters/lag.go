@@ -218,8 +218,9 @@ supports; only the values change (a number, short words, or NA):
   seconds ago on the source. It reads "not available yet" when the boundaries
   are missing or out of order, and NA when the standby is uninitialized.
 
-Use '-o json' for the full cluster status document. With '-o json', '--shards'
-has no additional effect because shardStatus is already part of the document.
+Use '-o json' for the full cluster status document. The document also carries
+the source's durable timestamp. With '-o json', '--shards' has no additional
+effect because shardStatus is already part of the document.
 
 Run 'mongocli ops-manager standby-clusters configure' first to set up access
 to the DR state file of your standby cluster.`,

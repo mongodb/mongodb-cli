@@ -46,6 +46,12 @@ type ClusterStatus struct {
 		ObservationTime          primitive.DateTime `bson:"observationTime" json:"observationTime"`
 		EarliestSafeTimestamp    Timestamp          `bson:"earliestSafeTimestamp" json:"earliestSafeTimestamp"`
 		MinCommittedOpTimestamp  Timestamp          `bson:"minCommittedOpTimestamp" json:"minCommittedOpTimestamp"`
+		// SourceDurableTimestamp is the source's durable timestamp (the point up
+		// to which the source has durably written). It is optional on the wire:
+		// the agent's writer omits it (with estimatedDataLossSeconds) while the
+		// standby's ESTS is uninitialized, so it is a pointer + omitempty and
+		// round-trips absent. Placed last to match the document's field order.
+		SourceDurableTimestamp *Timestamp `bson:"sourceDurableTimestamp,omitempty" json:"sourceDurableTimestamp,omitempty"`
 	} `bson:"clusterStatus" json:"clusterStatus"`
 	ShardStatus []ShardStatus `bson:"shardStatus" json:"shardStatus"`
 }

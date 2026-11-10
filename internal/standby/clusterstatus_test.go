@@ -38,6 +38,9 @@ func TestUnmarshalClusterStatus_Fixture(t *testing.T) {
 	assert.Equal(t, uint32(1), status.SchemaVersion)
 	assert.Equal(t, Timestamp{T: 1793875780, I: 1}, status.ClusterStatus.EarliestSafeTimestamp)
 	assert.Equal(t, Timestamp{T: 1793875770, I: 1}, status.ClusterStatus.MinCommittedOpTimestamp)
+	// The older fixture omits sourceDurableTimestamp (the agent omits it while
+	// ESTS is uninitialized), so it decodes as absent.
+	assert.Nil(t, status.ClusterStatus.SourceDurableTimestamp)
 	require.NotNil(t, status.ClusterStatus.EstimatedDataLossSeconds)
 	assert.InEpsilon(t, 40.0, *status.ClusterStatus.EstimatedDataLossSeconds, 0.0001)
 
@@ -47,6 +50,22 @@ func TestUnmarshalClusterStatus_Fixture(t *testing.T) {
 	require.NotNil(t, shard.LagSeconds)
 	assert.InEpsilon(t, 30.0, *shard.LagSeconds, 0.0001)
 	assert.Equal(t, Timestamp{T: 1793875770, I: 1}, shard.CommittedOptime)
+}
+
+// The live fixture is a cluster_status_v1 object published by a real relay: it
+// carries sourceDurableTimestamp, the last clusterStatus field, which the older
+// fixture does not.
+func TestUnmarshalClusterStatus_LiveFixture(t *testing.T) {
+	data, err := os.ReadFile("testdata/cluster_status_v1_live.bson")
+	require.NoError(t, err)
+
+	status, err := UnmarshalClusterStatus(data)
+	require.NoError(t, err)
+	require.NotNil(t, status)
+
+	assert.Equal(t, uint32(1), status.SchemaVersion)
+	require.NotNil(t, status.ClusterStatus.SourceDurableTimestamp)
+	assert.Equal(t, Timestamp{T: 1794321486, I: 0}, *status.ClusterStatus.SourceDurableTimestamp)
 }
 
 func TestUnmarshalClusterStatus_Malformed(t *testing.T) {
@@ -129,4 +148,26 @@ func TestClusterStatus_JSONRoundTrip(t *testing.T) {
 	require.Len(t, decoded.ShardStatus, 1)
 	assert.Equal(t, status.ShardStatus[0].ShardID, decoded.ShardStatus[0].ShardID)
 	assert.Equal(t, status.ShardStatus[0].CommittedOptime, decoded.ShardStatus[0].CommittedOptime)
+	// The older fixture omits sourceDurableTimestamp: -o json must not invent it,
+	// and it must decode back absent.
+	assert.NotContains(t, string(data), "sourceDurableTimestamp")
+	assert.Nil(t, decoded.ClusterStatus.SourceDurableTimestamp)
+}
+
+// A live document (which carries sourceDurableTimestamp) round-trips through
+// JSON with the field preserved, in the contract shape.
+func TestClusterStatus_LiveFixtureJSONRoundTrip(t *testing.T) {
+	data, err := os.ReadFile("testdata/cluster_status_v1_live.bson")
+	require.NoError(t, err)
+	status, err := UnmarshalClusterStatus(data)
+	require.NoError(t, err)
+
+	out, err := json.Marshal(status)
+	require.NoError(t, err)
+	assert.Contains(t, string(out), `"sourceDurableTimestamp":{"seconds":1794321486,"increment":0}`)
+
+	var decoded ClusterStatus
+	require.NoError(t, json.Unmarshal(out, &decoded))
+	require.NotNil(t, decoded.ClusterStatus.SourceDurableTimestamp)
+	assert.Equal(t, *status.ClusterStatus.SourceDurableTimestamp, *decoded.ClusterStatus.SourceDurableTimestamp)
 }
