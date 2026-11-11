@@ -203,10 +203,10 @@ Manager API, so it remains available when Ops Manager is unreachable.
 The plaintext output always shows the same labeled lines, whatever the object
 supports; only the values change (a number, short words, or NA):
 
-  estimated data loss: the operations the active cluster committed since the
-  standby's last safe point but that have not yet been shipped. They would be
-  lost in an unplanned failover. It is real elapsed time measured since the
-  safe point. It reads NA until the standby has initialized replication.
+  estimated data loss: the operations the active cluster committed which either
+  haven't been uploaded to object storage or won't be applied by the standby if
+  failover is triggered now. It is measured as worst case data loss even if
+  there was no activity for some seconds on the active cluster.
 
   With '--shards', each shard line reports the oplog the shard has received but
   not yet applied, as published by the agent. This is the drain work that
